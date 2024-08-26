@@ -1,3 +1,5 @@
+using Back.Implementation;
+using Back.Interfaces;
 using Back.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +10,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IMessageEncryption>(provider =>
+    new AESEncryption(builder.Configuration));
 
 var app = builder.Build();
 

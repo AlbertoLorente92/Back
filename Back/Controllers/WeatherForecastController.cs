@@ -1,3 +1,4 @@
+using Back.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Security.Cryptography;
@@ -16,12 +17,15 @@ namespace Back.Controllers
 
         private readonly ILogger<WeatherForecastController> _logger;
         private readonly IConfiguration _configuration;
+        private readonly IMessageEncryption _messageEncryption;
 
         public WeatherForecastController(ILogger<WeatherForecastController> logger
-            , IConfiguration configuration)
+            , IConfiguration configuration
+            , IMessageEncryption messageEncryption)
         {
             _logger = logger;
             _configuration = configuration;
+            _messageEncryption = messageEncryption;
         }
 
         [HttpGet("GetWeather", Name = "GetWeather")]
@@ -67,12 +71,7 @@ namespace Back.Controllers
 
             try
             {
-                var AesSecretKey = _configuration.GetValue<string>("AesSecretKey");
-                var AesIV = _configuration.GetValue<string>("AesIV");
-
-                byte[] encryptedBytes = Convert.FromBase64String(encryptedWeather);
-
-                string jsonString = DecryptWithAes(encryptedBytes, AesSecretKey, AesIV);
+                var jsonString =  _messageEncryption.Decrypt(encryptedWeather);
 
                 var weatherForecast = JsonConvert.DeserializeObject<WeatherForecast>(jsonString);
 
@@ -82,25 +81,12 @@ namespace Back.Controllers
                 }
 
                 return Ok(new { IsCorrect = true });
+                
             }
             catch (Exception ex)
             {
                 return BadRequest($"An error occurred: {ex.Message}");
             }
-        }
-
-        private string DecryptWithAes(byte[] cipherText, string key, string iv)
-        {
-            using Aes aesAlg = Aes.Create();
-            aesAlg.Key = Encoding.UTF8.GetBytes(key);
-            aesAlg.IV = Encoding.UTF8.GetBytes(iv);
-
-            ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
-
-            using MemoryStream msDecrypt = new(cipherText);
-            using CryptoStream csDecrypt = new(msDecrypt, decryptor, CryptoStreamMode.Read);
-            using StreamReader srDecrypt = new(csDecrypt);
-            return srDecrypt.ReadToEnd();
         }
     }
 }
