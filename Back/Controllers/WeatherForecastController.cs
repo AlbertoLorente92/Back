@@ -50,5 +50,16 @@ namespace Back.Controllers
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             });
         }
+
+        [HttpGet("DoesTheWeatherMatch", Name = "DoesTheWeatherMatch")]
+        public ActionResult DoesTheWeatherMatch(WeatherForecast weatherForecast)
+        {
+            if (weatherForecast == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(new { IsCorrect = true });
+        }
     }
 }

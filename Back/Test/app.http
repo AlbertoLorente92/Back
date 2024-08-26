@@ -6,6 +6,18 @@ X-API-KEY: 34f8ff10-a1a9-4e9f-bb3c-a7df1aec1827
 GET https://localhost:7165/WeatherForecast/GetWeatherForDay
 X-API-KEY: 34f8ff10-a1a9-4e9f-bb3c-a7df1aec1827
 
-### GetWeather endpoint from WeatherForecast 
+### GetWeatherForDay endpoint from WeatherForecast 
 GET https://localhost:7165/WeatherForecast/GetWeatherForDay?day=1
 X-API-KEY: 34f8ff10-a1a9-4e9f-bb3c-a7df1aec1827
+
+### DoesTheWeatherMatch endpoint from WeatherForecast 
+GET https://localhost:7165/WeatherForecast/DoesTheWeatherMatch
+X-API-KEY: 34f8ff10-a1a9-4e9f-bb3c-a7df1aec1827
+Content-Type: application/json
+
+{
+    "date": "2024-08-27",
+    "temperatureC": -6,
+    "temperatureF": 22,
+    "summary": "Warm"
+}
