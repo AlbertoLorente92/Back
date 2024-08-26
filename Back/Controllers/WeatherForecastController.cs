@@ -18,16 +18,37 @@ namespace Back.Controllers
             _logger = logger;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        [HttpGet("GetWeather", Name = "GetWeather")]
+        public ActionResult GetWeather()
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            return Ok(
+                Enumerable
+                    .Range(1, 5)
+                    .Select(
+                        index => new WeatherForecast {
+                            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+                            TemperatureC = Random.Shared.Next(-20, 55),
+                            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+                        }
+                    )
+                    .ToArray()
+            );
+        }
+
+        [HttpGet("GetWeatherForDay", Name = "GetWeatherForDay")]
+        public ActionResult GetWeatherForDay(int day)
+        {
+            if (day <= 0 || day > 30)
             {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+                return BadRequest();
+            }
+
+            return Ok(new WeatherForecast
+            {
+                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(day)),
                 TemperatureC = Random.Shared.Next(-20, 55),
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+            });
         }
     }
 }

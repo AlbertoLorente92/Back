@@ -1,0 +1,11 @@
+### GetWeather endpoint from WeatherForecast 
+GET https://localhost:7165/WeatherForecast/GetWeather
+X-API-KEY: 34f8ff10-a1a9-4e9f-bb3c-a7df1aec1827
+
+### GetWeatherForDay endpoint from WeatherForecast 
+GET https://localhost:7165/WeatherForecast/GetWeatherForDay
+X-API-KEY: 34f8ff10-a1a9-4e9f-bb3c-a7df1aec1827
+
+### GetWeather endpoint from WeatherForecast 
+GET https://localhost:7165/WeatherForecast/GetWeatherForDay?day=1
+X-API-KEY: 34f8ff10-a1a9-4e9f-bb3c-a7df1aec1827
