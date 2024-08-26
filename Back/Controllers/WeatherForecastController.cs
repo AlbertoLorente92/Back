@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Back.Controllers
 {
@@ -12,10 +15,13 @@ namespace Back.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly IConfiguration _configuration;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger
+            , IConfiguration configuration)
         {
             _logger = logger;
+            _configuration = configuration;
         }
 
         [HttpGet("GetWeather", Name = "GetWeather")]
@@ -40,7 +46,7 @@ namespace Back.Controllers
         {
             if (day <= 0 || day > 30)
             {
-                return BadRequest();
+                return BadRequest("Value of 'day' should be between 1 and 30");
             }
 
             return Ok(new WeatherForecast
@@ -52,14 +58,49 @@ namespace Back.Controllers
         }
 
         [HttpGet("DoesTheWeatherMatch", Name = "DoesTheWeatherMatch")]
-        public ActionResult DoesTheWeatherMatch(WeatherForecast weatherForecast)
+        public ActionResult DoesTheWeatherMatch(string encryptedWeather)
         {
-            if (weatherForecast == null)
+            if (string.IsNullOrEmpty(encryptedWeather))
             {
-                return BadRequest();
+                return BadRequest("Encrypted payload is missing.");
             }
 
-            return Ok(new { IsCorrect = true });
+            try
+            {
+                var AesSecretKey = _configuration.GetValue<string>("AesSecretKey");
+                var AesIV = _configuration.GetValue<string>("AesIV");
+
+                byte[] encryptedBytes = Convert.FromBase64String(encryptedWeather);
+
+                string jsonString = DecryptWithAes(encryptedBytes, AesSecretKey, AesIV);
+
+                var weatherForecast = JsonConvert.DeserializeObject<WeatherForecast>(jsonString);
+
+                if (weatherForecast == null)
+                {
+                    return BadRequest("Decrypted payload is invalid.");
+                }
+
+                return Ok(new { IsCorrect = true });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"An error occurred: {ex.Message}");
+            }
+        }
+
+        private string DecryptWithAes(byte[] cipherText, string key, string iv)
+        {
+            using Aes aesAlg = Aes.Create();
+            aesAlg.Key = Encoding.UTF8.GetBytes(key);
+            aesAlg.IV = Encoding.UTF8.GetBytes(iv);
+
+            ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
+            using MemoryStream msDecrypt = new(cipherText);
+            using CryptoStream csDecrypt = new(msDecrypt, decryptor, CryptoStreamMode.Read);
+            using StreamReader srDecrypt = new(csDecrypt);
+            return srDecrypt.ReadToEnd();
         }
     }
 }
