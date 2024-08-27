@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Moq;
 
-namespace UnitTest
+namespace UnitTest.Services
 {
     [TestFixture]
     public class AesEncryptionServiceTest
