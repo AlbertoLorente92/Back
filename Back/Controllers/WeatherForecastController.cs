@@ -1,8 +1,7 @@
 using Back.Interfaces;
+using Back.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Back.Controllers
 {
@@ -16,15 +15,13 @@ namespace Back.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
-        private readonly IConfiguration _configuration;
         private readonly IMessageEncryption _messageEncryption;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger
-            , IConfiguration configuration
+        public WeatherForecastController(
+            ILogger<WeatherForecastController> logger
             , IMessageEncryption messageEncryption)
         {
             _logger = logger;
-            _configuration = configuration;
             _messageEncryption = messageEncryption;
         }
 
@@ -80,8 +77,7 @@ namespace Back.Controllers
                     return BadRequest("Decrypted payload is invalid.");
                 }
 
-                return Ok(new { IsCorrect = true });
-                
+                return Ok(_messageEncryption.Encrypt(JsonConvert.SerializeObject(new DoesTheWeatherMatchResponse() { IsSuccess = true })));
             }
             catch (Exception ex)
             {
