@@ -15,11 +15,11 @@ namespace Back.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
-        private readonly IMessageEncryption _messageEncryption;
+        private readonly ITextEncryptionService _messageEncryption;
 
         public WeatherForecastController(
             ILogger<WeatherForecastController> logger
-            , IMessageEncryption messageEncryption)
+            , ITextEncryptionService messageEncryption)
         {
             _logger = logger;
             _messageEncryption = messageEncryption;

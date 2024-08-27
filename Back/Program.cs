@@ -11,8 +11,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IMessageEncryption>(provider =>
-    new AESEncryption(builder.Configuration));
+builder.Services.AddScoped<ITextEncryptionService>(provider =>
+    new AesEncryptionService(builder.Configuration));
 
 var app = builder.Build();
 

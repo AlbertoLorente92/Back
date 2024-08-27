@@ -4,14 +4,12 @@ using System.Text;
 
 namespace Back.Implementation
 {
-    #pragma warning disable S101 // Types should be named in PascalCase
-    public class AESEncryption : IMessageEncryption
-    #pragma warning restore S101 // Types should be named in PascalCase
+    public class AesEncryptionService : ITextEncryptionService
     {
         private readonly ICryptoTransform _decryptor;
         private readonly ICryptoTransform _encryptor;
 
-        public AESEncryption(IConfiguration configuration)
+        public AesEncryptionService(IConfiguration configuration)
         {
             var aesSecretKey = configuration.GetValue<string>("AesSecretKey") ?? string.Empty;
             var aesIV = configuration.GetValue<string>("AesIV") ?? string.Empty;
