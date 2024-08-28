@@ -13,3 +13,7 @@ X-API-KEY: 34f8ff10-a1a9-4e9f-bb3c-a7df1aec1827
 ### DoesTheWeatherMatch endpoint from WeatherForecast 
 GET https://localhost:7165/WeatherForecast/DoesTheWeatherMatch?encryptedWeather=ww4jTRz3PZDUabcTf0mJaVNx3dvl%2F7dUvW4Q3Dwva39E9dV2zSq9nsRAdlMuS5mDJ%2BTQuS%2FN%2BZLKVb%2FLPPtYvutLixA%2FTgjLj1JnzpWQhZM%3D
 X-API-KEY: 34f8ff10-a1a9-4e9f-bb3c-a7df1aec1827
+
+### CreateCompany endpoint from CompanyController 
+POST https://localhost:7165/Company/CreateCompany?encryptedCompany=04A5p36xoKUyTVGQ2SJRPTXMhh1tRAriYTgAYJHxf6qm7rPvJzRHKcg3SfbBnujT%2FO%2FyZTWsx7%2BlXehRXJeQpfpPUPaAKSn6rbjdqke0zySx%2FIsype4YZb4%2FVfCkyac5BlZSILVEti3qmbJ7OhUMQ6wrilFMmJaN2mIPBSGV1z6IBAzkhCPM9NLXoXU4%2FC5immw7U27TKUdUoi0v2KdwD93Zc0WxUh%2F%2FRFBXx%2F5MDeM%3D
+X-API-KEY: 34f8ff10-a1a9-4e9f-bb3c-a7df1aec1827

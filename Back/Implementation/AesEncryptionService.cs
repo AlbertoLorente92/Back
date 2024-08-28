@@ -1,4 +1,5 @@
 ﻿using Back.Interfaces;
+using Newtonsoft.Json;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -22,22 +23,61 @@ namespace Back.Implementation
 
         public string Decrypt(string encriptMessage)
         {
-            byte[] encryptedBytes = Convert.FromBase64String(encriptMessage);
-            using var msDecrypt = new MemoryStream(encryptedBytes);
-            using var csDecrypt = new CryptoStream(msDecrypt, _decryptor, CryptoStreamMode.Read);
-            using var srDecrypt = new StreamReader(csDecrypt);
-            return srDecrypt.ReadToEnd();
+            if (string.IsNullOrEmpty(encriptMessage))
+            {
+                return null!;
+            }
+            try
+            {
+                byte[] encryptedBytes = Convert.FromBase64String(encriptMessage);
+                using var msDecrypt = new MemoryStream(encryptedBytes);
+                using var csDecrypt = new CryptoStream(msDecrypt, _decryptor, CryptoStreamMode.Read);
+                using var srDecrypt = new StreamReader(csDecrypt);
+                return srDecrypt.ReadToEnd();
+            }
+            catch
+            {
+                return null!;
+            }
         }
 
         public string Encrypt(string plainMessage)
         {
-            using var msEncrypt = new MemoryStream();
-            using var csEncrypt = new CryptoStream(msEncrypt, _encryptor, CryptoStreamMode.Write);
-            using (var swEncrypt = new StreamWriter(csEncrypt))
+            if (string.IsNullOrEmpty(plainMessage))
             {
-                swEncrypt.Write(plainMessage);
+                return null!;
             }
-            return Convert.ToBase64String(msEncrypt.ToArray());
+            try
+            {
+                using var msEncrypt = new MemoryStream();
+                using var csEncrypt = new CryptoStream(msEncrypt, _encryptor, CryptoStreamMode.Write);
+                using (var swEncrypt = new StreamWriter(csEncrypt))
+                {
+                    swEncrypt.Write(plainMessage);
+                }
+                return Convert.ToBase64String(msEncrypt.ToArray());
+            }
+            catch
+            {
+                return null!;
+            }
+        }
+
+        public T? DecryptAndDeserialize<T>(string encriptMessage) where T : class
+        {
+            if (string.IsNullOrEmpty(encriptMessage))
+            {
+                return null!;
+            }
+            try
+            {
+                var json = Decrypt(encriptMessage);
+                return JsonConvert.DeserializeObject<T>(json)!;
+            }
+            catch 
+            {
+                return null;
+            }
         }
     }
 }
