@@ -11,13 +11,16 @@ namespace Back.Controllers
     {
         private readonly ILogger<CompanyController> _logger;
         private readonly ITextEncryptionService _messageEncryption;
+        private readonly IConfiguration _configuration;
 
         public CompanyController(
             ILogger<CompanyController> logger
-            , ITextEncryptionService messageEncryption)
+            , ITextEncryptionService messageEncryption
+            , IConfiguration configuration)
         {
             _logger = logger;
             _messageEncryption = messageEncryption;
+            _configuration = configuration;
         }
 
         [HttpPost("CreateCompany", Name = "CreateCompany")]
@@ -37,9 +40,12 @@ namespace Back.Controllers
                     return BadRequest("Decrypted payload is invalid.");
                 }
 
+                if (SaveCompany(encryptedCompany))
+                {
+                    return Ok();
+                }
 
-
-                return Ok(_messageEncryption.Encrypt(JsonConvert.SerializeObject(new DoesTheWeatherMatchResponse() { IsSuccess = true })));
+                return Problem(detail: "An unexpected error occurred.", statusCode: 500);
             }
             catch (Exception ex)
             {
@@ -47,5 +53,20 @@ namespace Back.Controllers
             }
         }
 
+        private bool SaveCompany(string encryptedCompany)
+        {
+            try
+            {
+                var companiesFile = _configuration.GetValue<string>("CompaniesFile") ?? string.Empty;
+                var path = Path.Combine(AppContext.BaseDirectory, companiesFile);
+                using var writer = new StreamWriter(path, append: true);
+                writer.WriteLine(encryptedCompany);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }
