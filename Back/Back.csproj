@@ -13,8 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="FilesDB\CompaniesManualTesting.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="FilesDB\Companies.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

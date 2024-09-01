@@ -125,22 +125,24 @@ namespace UnitTest.Services
         public void DecryptAndDeserialize_ShouldReturnOriginalObject()
         {
             // Arrange
-            var company = new Company()
+            var company = new CompanyEntity()
             {
                 Guid = Guid.NewGuid(),
                 Id = 1,
                 Name = "Company",
                 ComercialName = "Company",
-                Vat = "00000001R"
+                Vat = "00000001R",
+                Deleted = false,
+                CreationDate = DateTime.UtcNow
             };
 
             // Act
             string encryptedText = _aesEncryptionService.Encrypt(JsonConvert.SerializeObject(company));
-            var decryptedCompany = _aesEncryptionService.DecryptAndDeserialize<Company>(encryptedText);
+            var decryptedCompany = _aesEncryptionService.DecryptAndDeserialize<CompanyEntity>(encryptedText);
 
             // Assert
             Assert.That(decryptedCompany, Is.Not.Null);
-            Assert.That(decryptedCompany, Is.InstanceOf<Company>());
+            Assert.That(decryptedCompany, Is.InstanceOf<CompanyEntity>());
         }
 
         [Test]
@@ -150,7 +152,7 @@ namespace UnitTest.Services
             string encryptedText = null!;
 
             // Act
-            var decryptedCompany = _aesEncryptionService.DecryptAndDeserialize<Company>(encryptedText);
+            var decryptedCompany = _aesEncryptionService.DecryptAndDeserialize<CompanyEntity>(encryptedText);
 
             // Assert
             Assert.That(decryptedCompany, Is.Null);
@@ -163,7 +165,50 @@ namespace UnitTest.Services
             string encryptedText = string.Empty;
 
             // Act
-            var decryptedCompany = _aesEncryptionService.DecryptAndDeserialize<Company>(encryptedText);
+            var decryptedCompany = _aesEncryptionService.DecryptAndDeserialize<CompanyEntity>(encryptedText);
+
+            // Assert
+            Assert.That(decryptedCompany, Is.Null);
+        }
+        #endregion DecryptAndDeserialize method
+
+        #region DecryptAndDeserialize method
+        [Test]
+        public void SerielizeAndEncrypt_ShouldReturnOriginalObject()
+        {
+            // Arrange
+            var company = new CompanyEntity()
+            {
+                Guid = Guid.NewGuid(),
+                Id = 1,
+                Name = "Company",
+                ComercialName = "Company",
+                Vat = "00000001R",
+                Deleted = false,
+                CreationDate = DateTime.UtcNow
+            };
+
+            // Act
+            string encryptedText = _aesEncryptionService.SerielizeAndEncrypt(company);
+            var decryptedCompany = _aesEncryptionService.DecryptAndDeserialize<CompanyEntity>(encryptedText);
+
+            // Assert
+            Assert.That(decryptedCompany, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(decryptedCompany, Is.InstanceOf<CompanyEntity>());
+                Assert.That(company, Is.EqualTo(decryptedCompany));
+            });
+        }
+
+        [Test]
+        public void SerielizeAndEncrypt_WhenObjectIsNull_ShouldReturnNull()
+        {
+            // Arrange
+            string encryptedText = null!;
+
+            // Act
+            var decryptedCompany = _aesEncryptionService.SerielizeAndEncrypt(encryptedText);
 
             // Assert
             Assert.That(decryptedCompany, Is.Null);
