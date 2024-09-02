@@ -1,12 +1,10 @@
-﻿using Back.Controllers;
-using Back.Enums;
+﻿using Back.Enums;
 using Back.Implementation;
 using Back.Interfaces;
 using Back.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System.Reflection;
 
 namespace UnitTest.Services
 {
@@ -14,12 +12,13 @@ namespace UnitTest.Services
     public class CompanyServiceTest
     {
         private ICompanyService _companyServiceTest;
-        private Mock<ITextEncryptionService> _encryptionService;
+        private Mock<ICompanies> _companies;
+
         [SetUp]
         public void Setup()
         {
             var mockLogger = new Mock<ILogger<CompanyService>>();
-            _encryptionService = new Mock<ITextEncryptionService>();
+            _companies = new Mock<ICompanies>();
 
             var mockSectionCompaniesFile = new Mock<IConfigurationSection>();
             mockSectionCompaniesFile.Setup(x => x.Value).Returns("FilesDB\\Companies.txt");
@@ -35,11 +34,9 @@ namespace UnitTest.Services
             _mockConfiguration.Setup(config => config.GetSection("AesSecretKey")).Returns(mockSectionAesSecretKey.Object);
             _mockConfiguration.Setup(config => config.GetSection("AesIV")).Returns(mockSectionAesIV.Object);
 
-
             _companyServiceTest = new CompanyService(
                 logger: mockLogger.Object,
-                textEncryptionService: _encryptionService.Object,
-                configuration: _mockConfiguration.Object
+                companies: _companies.Object
             );
         }
 
@@ -56,8 +53,7 @@ namespace UnitTest.Services
                 new() { Guid = Guid.NewGuid(), Id = 2, Name = "Company B", ComercialName = "Company B", CreationDate = DateTime.UtcNow, Deleted = false, Vat = "00000002R" },
             };
 
-            var companiesField = typeof(CompanyService).GetField("_companies", BindingFlags.NonPublic | BindingFlags.Instance);
-            companiesField?.SetValue(_companyServiceTest, mockedCompanies);
+            _companies.Setup(x => x.Companies).Returns(mockedCompanies);
 
             // Act
             var response = _companyServiceTest.GetCompanyById(companyId);
@@ -81,8 +77,7 @@ namespace UnitTest.Services
                 new() { Guid = Guid.NewGuid(), Id = 2, Name = "Company B", ComercialName = "Company B", CreationDate = DateTime.UtcNow, Deleted = false, Vat = "00000002R" },
             };
 
-            var companiesField = typeof(CompanyService).GetField("_companies", BindingFlags.NonPublic | BindingFlags.Instance);
-            companiesField?.SetValue(_companyServiceTest, mockedCompanies);
+            _companies.Setup(x => x.Companies).Returns(mockedCompanies);
 
             // Act
             var response = _companyServiceTest.GetCompanyByVat(companyVat);
@@ -93,7 +88,7 @@ namespace UnitTest.Services
         }
         #endregion GetCompanyByVat method
 
-        #region GetCompanyByVat method
+        #region GetCompanyByGuid method
         [Test]
         public void GetCompanyByGuid()
         {
@@ -106,8 +101,7 @@ namespace UnitTest.Services
                 new() { Guid = Guid.NewGuid(), Id = 2, Name = "Company B", ComercialName = "Company B", CreationDate = DateTime.UtcNow, Deleted = false, Vat = "00000002R" },
             };
 
-            var companiesField = typeof(CompanyService).GetField("_companies", BindingFlags.NonPublic | BindingFlags.Instance);
-            companiesField?.SetValue(_companyServiceTest, mockedCompanies);
+            _companies.Setup(x => x.Companies).Returns(mockedCompanies);
 
             // Act
             var response = _companyServiceTest.GetCompanyByGuid(guid);
@@ -116,9 +110,32 @@ namespace UnitTest.Services
             Assert.That(response, Is.Not.Null);
             Assert.That(response, Is.EqualTo(company));
         }
-        #endregion GetCompanyByVat method
+        #endregion GetCompanyByGuid method
 
-        #region GetCompanyByVat method
+        #region GetCompanies method
+        [Test]
+        public void GetCompanies()
+        {
+            // Arrange
+
+            var mockedCompanies = new List<CompanyEntity>
+            {
+                new() { Guid = Guid.NewGuid(), Id = 1, Name = "Company A", ComercialName = "Company A", CreationDate = DateTime.UtcNow, Deleted = false, Vat = "00000001R" },
+                new() { Guid = Guid.NewGuid(), Id = 2, Name = "Company B", ComercialName = "Company B", CreationDate = DateTime.UtcNow, Deleted = false, Vat = "00000002R" },
+            };
+
+            _companies.Setup(x => x.Companies).Returns(mockedCompanies);
+
+            // Act
+            var response = _companyServiceTest.GetCompanies();
+
+            // Assert
+            Assert.That(response, Is.Not.Null);
+            Assert.That(response.All(item1 => mockedCompanies.Contains(item1)), Is.True);
+        }
+        #endregion GetCompanies method
+
+        #region CreateCompany method
         [Test]
         public void CreateCompany()
         {
@@ -136,8 +153,8 @@ namespace UnitTest.Services
                 new() { Guid = Guid.NewGuid(), Id = 2, Name = "Company B", ComercialName = "Company B", CreationDate = DateTime.UtcNow, Deleted = false, Vat = "00000002R" },
             };
 
-            var companiesField = typeof(CompanyService).GetField("_companies", BindingFlags.NonPublic | BindingFlags.Instance);
-            companiesField?.SetValue(_companyServiceTest, mockedCompanies);
+            _companies.Setup(x => x.Companies).Returns(mockedCompanies);
+            _companies.Setup(x => x.CreateCompany(It.IsAny<CompanyEntity>())).Returns(true);
 
             // Act
             var response = _companyServiceTest.CreateCompany(createCompanyRequest);
@@ -158,14 +175,14 @@ namespace UnitTest.Services
                 Name = "Company C",
             };
 
+
             var mockedCompanies = new List<CompanyEntity>
             {
                 new() { Guid = Guid.NewGuid(), Id = 1, Name = "Company A", ComercialName = "Company A", CreationDate = DateTime.UtcNow, Deleted = false, Vat = "00000001R" },
                 new() { Guid = Guid.NewGuid(), Id = 2, Name = "Company B", ComercialName = "Company B", CreationDate = DateTime.UtcNow, Deleted = false, Vat = "00000002R" },
             };
 
-            var companiesField = typeof(CompanyService).GetField("_companies", BindingFlags.NonPublic | BindingFlags.Instance);
-            companiesField?.SetValue(_companyServiceTest, mockedCompanies);
+            _companies.Setup(x => x.Companies).Returns(mockedCompanies);
 
             // Act
             var response = _companyServiceTest.CreateCompany(createCompanyRequest);
@@ -174,6 +191,6 @@ namespace UnitTest.Services
             Assert.That(response, Is.Not.Null);
             Assert.That(response.SaveCompanyCode, Is.EqualTo(SaveCompanyCode.VatAlreadyExists));
         }
-        #endregion GetCompanyByVat method
+        #endregion CreateCompany method
     }
 }

@@ -28,5 +28,17 @@ namespace Back.Mappers
                 _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
             };
         }
+
+        public static ErrorCodes Map(UpdateCompanyCode source)
+        {
+            return source switch
+            {
+                UpdateCompanyCode.VatAlreadyExists => ErrorCodes.VatAlreadyExists,
+                UpdateCompanyCode.UnknownError => ErrorCodes.UnknownError,
+                UpdateCompanyCode.CompanyDoesNotExist => ErrorCodes.CompanyDoesNotExist,
+                UpdateCompanyCode.UnmodifiableProperty => ErrorCodes.UnmodifiableProperty,
+                _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
+            };
+        }
     }
 }

@@ -49,7 +49,7 @@ namespace UnitTest.Controllers
             );
         }
 
-        #region CreateCompany method
+        #region GetCompanyById method
         [Test]
         public void GetCompanyById_WithEverythingCorrect_ShouldReturnOk()
         {
@@ -165,12 +165,6 @@ namespace UnitTest.Controllers
             var getCompanyById = "getCompanyById";
             var companyId = 1;
 
-            var createCompanyResponse = new CreateCompanyResponse()
-            {
-                SaveCompanyCode = SaveCompanyCode.VatAlreadyExists,
-                Company = null
-            };
-
             _encryptionService.Setup(x => x.Decrypt(It.IsAny<string>())).Returns(companyId.ToString);
             _companyService.Setup(x => x.GetCompanyById(It.IsAny<int>())).Returns((CompanyEntity)null!);
 
@@ -186,11 +180,11 @@ namespace UnitTest.Controllers
         public void GetCompanyById_WhenExceptionOccours_ShouldReturnProblem()
         {
             // Arrange
-            var createCompanyRequestEncrypted = "createCompanyRequestEncrypted";
+            var getCompanyById = "getCompanyById";
             _encryptionService.Setup(x => x.Decrypt(It.IsAny<string>())).Throws(new Exception("exception"));
 
             // Act
-            var result = _controller.GetCompanyById(createCompanyRequestEncrypted);
+            var result = _controller.GetCompanyById(getCompanyById);
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -198,7 +192,363 @@ namespace UnitTest.Controllers
 
             Assert.That(objectResult?.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
         }
-        #endregion CreateCompany method
+        #endregion GetCompanyById method
+
+        #region GetCompanyByVat method
+        [Test]
+        public void GetCompanyByVat_WithEverythingCorrect_ShouldReturnOk()
+        {
+            // Arrange
+            var companyVatEncrypted = "companyVatEncrypted";
+            var companyVat = "00000001R";
+
+            var company = new CompanyEntity()
+            {
+                Name = "Company",
+                ComercialName = "Company",
+                Vat = companyVat,
+                Guid = Guid.NewGuid(),
+                CreationDate = DateTime.UtcNow,
+                Id = 1,
+                Deleted = false,
+            };
+
+            _encryptionService.Setup(x => x.Decrypt(It.IsAny<string>())).Returns(companyVat);
+            _companyService.Setup(x => x.GetCompanyByVat(It.IsAny<string>())).Returns(company);
+            _encryptionService.Setup(x => x.SerielizeAndEncrypt(It.IsAny<object>())).Returns(JsonConvert.SerializeObject(company));
+
+
+            // Act
+            var result = _controller.GetCompanyByVat(companyVatEncrypted);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var okResult = result as OkObjectResult;
+            var okResultValue = JsonConvert.DeserializeObject<CompanyEntity>((string?)(okResult?.Value)!);
+
+            Assert.That(okResultValue, Is.InstanceOf<CompanyEntity>());
+            Assert.That(okResultValue, Is.EqualTo(company));
+        }
+
+        [Test]
+        public void GetCompanyByVat_WhenPayloadIsNull_ShouldBadRequest()
+        {
+            // Arrange
+
+
+            // Act
+            var result = _controller.GetCompanyByVat(null!);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var badRequestObjectResult = result as BadRequestObjectResult;
+            var badRequestValue = badRequestObjectResult?.Value as ErrorResponse;
+
+            Assert.That(badRequestValue?.ErrorCode, Is.EqualTo(ErrorCodes.PayloadIsMissing));
+        }
+
+        [Test]
+        public void GetCompanyByVat_WhenPayloadIsEmpty_ShouldBadRequest()
+        {
+            // Arrange
+
+
+            // Act
+            var result = _controller.GetCompanyByVat(string.Empty);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var badRequestObjectResult = result as BadRequestObjectResult;
+            var badRequestValue = badRequestObjectResult?.Value as ErrorResponse;
+
+            Assert.That(badRequestValue?.ErrorCode, Is.EqualTo(ErrorCodes.PayloadIsMissing));
+        }
+
+        [Test]
+        public void GetCompanyByVat_WithErrorWhenDecrypt_ShouldBadRequest()
+        {
+            // Arrange
+            var getCompanyByVat = "getCompanyByVat";
+
+            _encryptionService.Setup(x => x.Decrypt(It.IsAny<string>())).Returns((string)null!);
+
+            // Act
+            var result = _controller.GetCompanyByVat(getCompanyByVat);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var badRequestObjectResult = result as BadRequestObjectResult;
+            var badRequestValue = badRequestObjectResult?.Value as ErrorResponse;
+
+            Assert.That(badRequestValue?.ErrorCode, Is.EqualTo(ErrorCodes.PayloadDecryptionFailed));
+        }
+
+        [Test]
+        public void GetCompanyByVat_WithErrorWhenParseInputData_ShouldBadRequest()
+        {
+            // Arrange
+            var getCompanyByVat = "getCompanyByVat";
+            var companyVat = string.Empty;
+
+            _encryptionService.Setup(x => x.Decrypt(It.IsAny<string>())).Returns(companyVat);
+
+            // Act
+            var result = _controller.GetCompanyByVat(getCompanyByVat);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var badRequestObjectResult = result as BadRequestObjectResult;
+            var badRequestValue = badRequestObjectResult?.Value as ErrorResponse;
+
+            Assert.That(badRequestValue?.ErrorCode, Is.EqualTo(ErrorCodes.InvalidDecryptedData));
+        }
+
+        [Test]
+        public void GetCompanyByVat_WhenVatDoesNotExists_ShouldReturnNotFound()
+        {
+            // Arrange
+            var getCompanyByVat = "getCompanyByVat";
+            var companyVat = "00000001R";
+
+            _encryptionService.Setup(x => x.Decrypt(It.IsAny<string>())).Returns(companyVat);
+            _companyService.Setup(x => x.GetCompanyById(It.IsAny<int>())).Returns((CompanyEntity)null!);
+
+            // Act
+            var result = _controller.GetCompanyByVat(getCompanyByVat);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+        }
+
+        [Test]
+        public void GetCompanyByVat_WhenExceptionOccours_ShouldReturnProblem()
+        {
+            // Arrange
+            var getCompanyById = "getCompanyById";
+            _encryptionService.Setup(x => x.Decrypt(It.IsAny<string>())).Throws(new Exception("exception"));
+
+            // Act
+            var result = _controller.GetCompanyById(getCompanyById);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var objectResult = result as ObjectResult;
+
+            Assert.That(objectResult?.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+        }
+        #endregion GetCompanyByVat method
+
+        #region GetCompanyByGuid method
+        [Test]
+        public void GetCompanyByGuid_WithEverythingCorrect_ShouldReturnOk()
+        {
+            // Arrange
+            var companyGuidEncrypted = "companyGuidEncrypted";
+            var companyGuid = Guid.NewGuid();
+
+            var company = new CompanyEntity()
+            {
+                Name = "Company",
+                ComercialName = "Company",
+                Vat = "00000001R",
+                Guid = companyGuid,
+                CreationDate = DateTime.UtcNow,
+                Id = 1,
+                Deleted = false,
+            };
+
+            _encryptionService.Setup(x => x.Decrypt(It.IsAny<string>())).Returns(companyGuid.ToString());
+            _companyService.Setup(x => x.GetCompanyByGuid(It.IsAny<Guid>())).Returns(company);
+            _encryptionService.Setup(x => x.SerielizeAndEncrypt(It.IsAny<object>())).Returns(JsonConvert.SerializeObject(company));
+
+
+            // Act
+            var result = _controller.GetCompanyByGuid(companyGuidEncrypted);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var okResult = result as OkObjectResult;
+            var okResultValue = JsonConvert.DeserializeObject<CompanyEntity>((string?)(okResult?.Value)!);
+
+            Assert.That(okResultValue, Is.InstanceOf<CompanyEntity>());
+            Assert.That(okResultValue, Is.EqualTo(company));
+        }
+
+        [Test]
+        public void GetCompanyByGuid_WhenPayloadIsNull_ShouldBadRequest()
+        {
+            // Arrange
+
+
+            // Act
+            var result = _controller.GetCompanyByGuid(null!);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var badRequestObjectResult = result as BadRequestObjectResult;
+            var badRequestValue = badRequestObjectResult?.Value as ErrorResponse;
+
+            Assert.That(badRequestValue?.ErrorCode, Is.EqualTo(ErrorCodes.PayloadIsMissing));
+        }
+
+        [Test]
+        public void GetCompanyByGuid_WhenPayloadIsEmpty_ShouldBadRequest()
+        {
+            // Arrange
+
+
+            // Act
+            var result = _controller.GetCompanyByGuid(string.Empty);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var badRequestObjectResult = result as BadRequestObjectResult;
+            var badRequestValue = badRequestObjectResult?.Value as ErrorResponse;
+
+            Assert.That(badRequestValue?.ErrorCode, Is.EqualTo(ErrorCodes.PayloadIsMissing));
+        }
+
+        [Test]
+        public void GetCompanyByGuid_WithErrorWhenDecrypt_ShouldBadRequest()
+        {
+            // Arrange
+            var getCompanyByGuid = "getCompanyByGuid";
+
+            _encryptionService.Setup(x => x.Decrypt(It.IsAny<string>())).Returns((string)null!);
+
+            // Act
+            var result = _controller.GetCompanyByGuid(getCompanyByGuid);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var badRequestObjectResult = result as BadRequestObjectResult;
+            var badRequestValue = badRequestObjectResult?.Value as ErrorResponse;
+
+            Assert.That(badRequestValue?.ErrorCode, Is.EqualTo(ErrorCodes.PayloadDecryptionFailed));
+        }
+
+        [Test]
+        public void GetCompanyByGuid_WithErrorWhenParseInputData_ShouldBadRequest()
+        {
+            // Arrange
+            var getCompanyByGuid = "getCompanyByGuid";
+            var companyGuid = "stringThatsNotAGuid";
+
+            _encryptionService.Setup(x => x.Decrypt(It.IsAny<string>())).Returns(companyGuid);
+
+            // Act
+            var result = _controller.GetCompanyByGuid(getCompanyByGuid);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var badRequestObjectResult = result as BadRequestObjectResult;
+            var badRequestValue = badRequestObjectResult?.Value as ErrorResponse;
+
+            Assert.That(badRequestValue?.ErrorCode, Is.EqualTo(ErrorCodes.InvalidDecryptedData));
+        }
+
+        [Test]
+        public void GetCompanyByGuid_WhenCompanyGuidDoesNotExists_ShouldReturnNotFound()
+        {
+            // Arrange
+            var getCompanyByGuid = "getCompanyByGuid";
+            var companyGuid = Guid.NewGuid();
+
+            _encryptionService.Setup(x => x.Decrypt(It.IsAny<string>())).Returns(companyGuid.ToString());
+            _companyService.Setup(x => x.GetCompanyById(It.IsAny<int>())).Returns((CompanyEntity)null!);
+
+            // Act
+            var result = _controller.GetCompanyByGuid(getCompanyByGuid);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+        }
+
+        [Test]
+        public void GetCompanyByGuid_WhenExceptionOccours_ShouldReturnProblem()
+        {
+            // Arrange
+            var getCompanyByGuid = "getCompanyByGuid";
+            _encryptionService.Setup(x => x.Decrypt(It.IsAny<string>())).Throws(new Exception("exception"));
+
+            // Act
+            var result = _controller.GetCompanyByGuid(getCompanyByGuid);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var objectResult = result as ObjectResult;
+
+            Assert.That(objectResult?.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+        }
+        #endregion GetCompanyByVat method
+
+        #region GetAllCompanies method
+        [Test]
+        public void GetAllCompanies_WithEverythingCorrect_ShouldReturnOk()
+        {
+            // Arrange
+            var companies = new List<CompanyEntity>() { 
+                new() {
+                    Name = "Company",
+                    ComercialName = "Company",
+                    Vat = "00000001R",
+                    Guid = Guid.NewGuid(),
+                    CreationDate = DateTime.UtcNow,
+                    Id = 1,
+                    Deleted = false,
+                }
+            };
+
+            _companyService.Setup(x => x.GetCompanies()).Returns(companies);
+            _encryptionService.Setup(x => x.SerielizeAndEncrypt(It.IsAny<object>())).Returns(JsonConvert.SerializeObject(companies));
+
+            // Act
+            var result = _controller.GetAllCompanies();
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var okResult = result as OkObjectResult;
+            var okResultValue = JsonConvert.DeserializeObject<List<CompanyEntity>>((string?)(okResult?.Value)!);
+
+            Assert.That(okResultValue, Is.InstanceOf<List<CompanyEntity>>());
+            Assert.That(okResultValue.Count, Is.EqualTo(companies.Count));
+            foreach(var company in okResultValue){
+                Assert.That(company, Is.EqualTo(companies.FirstOrDefault(c => c.Equals(company))));
+            }
+        }
+
+        [Test]
+        public void GetAllCompanies_WhenCompaniesDoesNotExists_ShouldReturnNotFound()
+        {
+            // Arrange
+            _companyService.Setup(x => x.GetCompanies()).Returns((List<CompanyEntity>)null!);
+
+            // Act
+            var result = _controller.GetAllCompanies();
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+        }
+
+        [Test]
+        public void GetAllCompanies_WhenExceptionOccours_ShouldReturnProblem()
+        {
+            // Arrange
+            _companyService.Setup(x => x.GetCompanies()).Throws(new Exception("exception"));
+
+            // Act
+            var result = _controller.GetAllCompanies();
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var objectResult = result as ObjectResult;
+
+            Assert.That(objectResult?.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+        }
+        #endregion GetAllCompanies method
 
         #region CreateCompany method
         [Test]

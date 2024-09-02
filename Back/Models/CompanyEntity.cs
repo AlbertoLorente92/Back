@@ -27,12 +27,24 @@
         {
             if (other is null) return false;
 
-            return Guid.Equals(other.Guid) && Id.Equals(other.Id) && Vat.Equals(other.Vat);
+            return Guid.Equals(other.Guid) && Id.Equals(other.Id);
         }
 
         public override int GetHashCode()
         {
             return HashCode.Combine(Guid, Id);
+        }
+
+        public override string ToString()
+        {
+            return 
+                $"Guid:          {Guid}\n" +
+                $"Id:            {Id}\n" +
+                $"Name:          {Name}\n" +
+                $"ComercialName: {ComercialName}\n" +
+                $"Vat:           {Vat}\n" +
+                $"Deleted:       {Deleted}\n" +
+                $"CreationDate:  {CreationDate}";
         }
     }
 }

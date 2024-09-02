@@ -9,5 +9,6 @@ namespace Back.Interfaces
         public CompanyEntity? GetCompanyByGuid(Guid guid);
         public List<CompanyEntity> GetCompanies();
         public CreateCompanyResponse CreateCompany(CreateCompanyRequest request);
+        public UpdateCompanyResponse UpdateCompany(UpdateCompanyRequest request);
     }
 }

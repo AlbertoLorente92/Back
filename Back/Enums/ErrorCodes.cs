@@ -19,6 +19,10 @@ namespace Back.Enums
         #region Company errors
         [Description("Vat already exists on database")]
         VatAlreadyExists = 2001,
+        [Description("Company does not exists on database")]
+        CompanyDoesNotExist = 2002,
+        [Description("Unmodifiable property")]
+        UnmodifiableProperty = 2003,
         #endregion General errors
     }
 }
