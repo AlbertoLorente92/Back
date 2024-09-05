@@ -1,13 +1,22 @@
-﻿namespace Back.Models
+﻿using Back.Enums;
+
+namespace Back.Models
 {
     public sealed class CompanyEntity : IEquatable<CompanyEntity>
     {
+        [ColumnControlLabel(ColumnProperty.Unmodifiable)]
         public required Guid Guid { get; set; }
+        [ColumnControlLabel(ColumnProperty.Unmodifiable)]
         public required int Id { get; set; }
+        [ColumnControlLabel(ColumnProperty.NotEmpty)]
         public required string Name { get; set; }
+        [ColumnControlLabel(ColumnProperty.NotEmpty)]
         public required string ComercialName { get; set; }
+        [ColumnControlLabel(ColumnProperty.Unique)]
         public required string Vat { get; set; }
+        [ColumnControlLabel(ColumnProperty.NotEmpty)]
         public required bool Deleted { get; set; }
+        [ColumnControlLabel(ColumnProperty.Unmodifiable)]
         public required DateTime CreationDate { get; set; }
 
         public override bool Equals(object? obj)

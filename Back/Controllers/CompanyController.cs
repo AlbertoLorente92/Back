@@ -183,7 +183,7 @@ namespace Back.Controllers
                     return Ok(_textEncryption.SerielizeAndEncrypt(result.Company!));
                 }
 
-                ErrorCodes response = CompanyMapper.Map((SaveCompanyCode)result.SaveCompanyCode!);
+                ErrorCodes response = CompanyMapper.Map(result.SaveCompanyCode);
                 return BadRequest(new ErrorResponse(response, response.GetDescription()));
             }
             catch(Exception ex)
@@ -216,12 +216,12 @@ namespace Back.Controllers
                     return Ok(_textEncryption.SerielizeAndEncrypt(result.Company!));
                 }
 
-                ErrorCodes response = CompanyMapper.Map((SaveCompanyCode)result.UpdateCompanyCode!);
-                return BadRequest(new ErrorResponse(response, response.GetDescription()));
+                ErrorCodes response = CompanyMapper.Map(result.UpdateCompanyCode);
+                return BadRequest(new ErrorResponse(response, result.ErrorMessage != string.Empty ? result.ErrorMessage : response.GetDescription()));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "CreateCompany");
+                _logger.LogError(ex, "UpdateCompany");
                 return Problem("An error occurred");
             }
         }

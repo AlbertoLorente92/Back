@@ -6,6 +6,11 @@
         VatAlreadyExists,
         CompanyDoesNotExist,
         UnmodifiableProperty,
+        UniqueProperty,
+        NonExistentProperty,
+        PropertyCastingError,
+        CompanyIsDeleted,
+        WrongValue,
         UnknownError
     }
 }

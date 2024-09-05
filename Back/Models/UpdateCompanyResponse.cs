@@ -6,5 +6,6 @@ namespace Back.Models
     {
         public UpdateCompanyCode UpdateCompanyCode { get; set; }
         public CompanyEntity? Company { get; set; }
+        public string ErrorMessage { get; set; } = string.Empty;
     }
 }

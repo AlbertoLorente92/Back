@@ -161,7 +161,7 @@ namespace UnitTest.Controllers
             var createCompanyRequest = new UpdateCompanyRequest()
             {
                 Guid = Guid.Parse("9610f8df-32df-4208-9251-c9b61d1acac0"),
-                Data = new Dictionary<string, object> { { "Name", "Alberto2" } }
+                Data = new Dictionary<string, object> { { "Name", "Alberto3" } }
             };
 
             var encryptedCompany = _realEncryptionService.SerielizeAndEncrypt(createCompanyRequest);
@@ -175,6 +175,75 @@ namespace UnitTest.Controllers
             var companyEntity = _realEncryptionService.DecryptAndDeserialize<CompanyEntity>((string)okObjectResult?.Value!);
 
             Console.WriteLine(companyEntity.ToString());
+        }
+
+        [Test]
+        public void UpdateCompany_PropDoesNotExists()
+        {
+            // Arrange
+            var createCompanyRequest = new UpdateCompanyRequest()
+            {
+                Guid = Guid.Parse("9610f8df-32df-4208-9251-c9b61d1acac0"),
+                Data = new Dictionary<string, object> { { "NonExistant", Guid.NewGuid() } }
+            };
+
+            var encryptedCompany = _realEncryptionService.SerielizeAndEncrypt(createCompanyRequest);
+
+            // Act
+            var result = _controller.UpdateCompany(encryptedCompany);
+
+            // Assert
+            var badRequestObjectResult = result as BadRequestObjectResult;
+            var response = badRequestObjectResult?.Value as ErrorResponse;
+
+            Console.WriteLine(response.ErrorCode.ToString());
+            Console.WriteLine(response.Message.ToString());
+        }
+
+        [Test]
+        public void UpdateCompany_Unmod()
+        {
+            // Arrange
+            var createCompanyRequest = new UpdateCompanyRequest()
+            {
+                Guid = Guid.Parse("9610f8df-32df-4208-9251-c9b61d1acac0"),
+                Data = new Dictionary<string, object> { { "Guid", Guid.NewGuid() } }
+            };
+
+            var encryptedCompany = _realEncryptionService.SerielizeAndEncrypt(createCompanyRequest);
+
+            // Act
+            var result = _controller.UpdateCompany(encryptedCompany);
+
+            // Assert
+            var badRequestObjectResult = result as BadRequestObjectResult;
+            var response = badRequestObjectResult?.Value as ErrorResponse;
+
+            Console.WriteLine(response.ErrorCode.ToString());
+            Console.WriteLine(response.Message.ToString());
+        }
+
+        [Test]
+        public void UpdateCompany_Unique()
+        {
+            // Arrange
+            var createCompanyRequest = new UpdateCompanyRequest()
+            {
+                Guid = Guid.Parse("9610f8df-32df-4208-9251-c9b61d1acac0"),
+                Data = new Dictionary<string, object> { { "Vat", "00000001R" } }
+            };
+
+            var encryptedCompany = _realEncryptionService.SerielizeAndEncrypt(createCompanyRequest);
+
+            // Act
+            var result = _controller.UpdateCompany(encryptedCompany);
+
+            // Assert
+            var badRequestObjectResult = result as BadRequestObjectResult;
+            var response = badRequestObjectResult?.Value as ErrorResponse;
+
+            Console.WriteLine(response.ErrorCode.ToString());
+            Console.WriteLine(response.Message.ToString());
         }
     }
 }

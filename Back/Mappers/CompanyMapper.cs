@@ -37,6 +37,9 @@ namespace Back.Mappers
                 UpdateCompanyCode.UnknownError => ErrorCodes.UnknownError,
                 UpdateCompanyCode.CompanyDoesNotExist => ErrorCodes.CompanyDoesNotExist,
                 UpdateCompanyCode.UnmodifiableProperty => ErrorCodes.UnmodifiableProperty,
+                UpdateCompanyCode.UniqueProperty => ErrorCodes.UnmodifiableProperty,
+                UpdateCompanyCode.NonExistentProperty => ErrorCodes.NonExistentProperty,
+                UpdateCompanyCode.PropertyCastingError => ErrorCodes.PropertyCastingError,
                 _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
             };
         }

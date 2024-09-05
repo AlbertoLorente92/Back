@@ -2,6 +2,7 @@
 using Back.Interfaces;
 using Back.Mappers;
 using Back.Models;
+using System.Reflection;
 
 namespace Back.Implementation
 {
@@ -41,51 +42,26 @@ namespace Back.Implementation
         {
             return SaveNewCompany(request);
         }
-        public bool UpdateCompany(CompanyEntity companyEntity)
-        {
-            var company = GetCompanyByGuid(companyEntity.Guid);
-            if (company == null)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
         public UpdateCompanyResponse UpdateCompany(UpdateCompanyRequest request)
         {
             var company = GetCompanyByGuid(request.Guid);
             if (company == null)
             {
-                return new UpdateCompanyResponse() { UpdateCompanyCode = UpdateCompanyCode.CompanyDoesNotExist};
+                return new UpdateCompanyResponse() 
+                { 
+                    UpdateCompanyCode = UpdateCompanyCode.CompanyDoesNotExist,
+                    ErrorMessage = "La empresa solicitada no existe"
+                };
             }
 
-            if (request.Data.ContainsKey("Guid") || request.Data.ContainsKey("Id"))
+            var sanitizeResponse = SanitizeRequestUpdateCompany(company, request);
+            if (sanitizeResponse.UpdateCompanyCode != UpdateCompanyCode.Ok)
             {
-                return new UpdateCompanyResponse() { UpdateCompanyCode = UpdateCompanyCode.UnmodifiableProperty };
-            }
-
-            if (request.Data.TryGetValue("Vat", out object? value) && CompanyAlreadyExists((string)value))
-            {
-                return new UpdateCompanyResponse() { UpdateCompanyCode = UpdateCompanyCode.VatAlreadyExists };
-            }
-
-            foreach (var update in request.Data)
-            {
-                var propertyName = update.Key;
-                var newValue = update.Value;
-
-                var propertyInfo = typeof(CompanyEntity).GetProperty(propertyName);
-
-                if (propertyInfo != null && propertyInfo.CanWrite)
+                return new UpdateCompanyResponse()
                 {
-                    var convertedValue = Convert.ChangeType(newValue, propertyInfo.PropertyType);
-                    propertyInfo.SetValue(company, convertedValue);
-                }
-                else
-                {
-                    return new UpdateCompanyResponse() { UpdateCompanyCode = UpdateCompanyCode.UnknownError };
-                }
+                    UpdateCompanyCode = sanitizeResponse.UpdateCompanyCode,
+                    ErrorMessage = sanitizeResponse.ErrorMessage
+                };
             }
 
             if (_companies.UpdateCompany(company))
@@ -95,6 +71,8 @@ namespace Back.Implementation
 
             return new UpdateCompanyResponse() { UpdateCompanyCode = UpdateCompanyCode.UnknownError };
         }
+
+        
 
         #region Private methods
         private CreateCompanyResponse SaveNewCompany(CreateCompanyRequest companyRequest)
@@ -127,6 +105,91 @@ namespace Back.Implementation
             }
 
             return CompanyMapper.MapToEntity(companyRequest, Guid.NewGuid(), id);
+        }
+
+        private SanitizeRequestUpdateCompanyResponse SanitizeRequestUpdateCompany(CompanyEntity company, UpdateCompanyRequest request)
+        {
+            string? propertyName = null;
+            PropertyInfo? propertyInfo = null;
+
+            try
+            {
+                foreach (var update in request.Data)
+                {
+                    propertyName = update.Key;
+                    object? newValue = update.Value;
+
+                    propertyInfo = typeof(CompanyEntity).GetProperty(propertyName);
+                    if (propertyInfo == null || !propertyInfo.CanWrite)
+                    {
+                        return new SanitizeRequestUpdateCompanyResponse()
+                        {
+                            Company = null,
+                            ErrorMessage = $"La propiedad '{propertyName}' no existe en la entidad de empresas",
+                            UpdateCompanyCode = UpdateCompanyCode.NonExistentProperty
+                        };
+                    }
+
+                    var columnProperty = propertyInfo?.GetCustomAttributes<ColumnControlLabelAttribute>().FirstOrDefault()!.Label;
+                    if (columnProperty == ColumnProperty.Unmodifiable)
+                    {
+                        return new SanitizeRequestUpdateCompanyResponse() 
+                        {
+                            Company = null,
+                            ErrorMessage = $"La propiedad '{propertyName}' no puede modificarse",
+                            UpdateCompanyCode = UpdateCompanyCode.UnmodifiableProperty
+                        };
+                    }
+
+                    if (columnProperty == ColumnProperty.Unique && !PropertyValueIsUnique(company.Guid, propertyInfo!, newValue))
+                    {
+                        return new SanitizeRequestUpdateCompanyResponse()
+                        {
+                            Company = null,
+                            ErrorMessage = $"El valor entregado para la propiedad '{propertyName}' ya existe en la base de datos",
+                            UpdateCompanyCode = UpdateCompanyCode.UniqueProperty
+                        };
+                    }
+
+                    var convertedValue = Convert.ChangeType(newValue, propertyInfo.PropertyType);
+                    propertyInfo.SetValue(company, convertedValue);
+                }
+
+                return new SanitizeRequestUpdateCompanyResponse()
+                {
+                    Company = company,
+                    UpdateCompanyCode = UpdateCompanyCode.Ok
+                };
+            }
+            catch
+            {
+                return new SanitizeRequestUpdateCompanyResponse()
+                {
+                    Company = null,
+                    ErrorMessage = $"El valor entregado para la propiedad '{propertyName}' no es válido. Se espera un {propertyInfo?.PropertyType.Name}",
+                    UpdateCompanyCode = UpdateCompanyCode.PropertyCastingError
+                };
+            }
+        }
+
+        private bool PropertyValueIsUnique(Guid companyGuid, PropertyInfo propertyInfo, object newValue)
+        {
+            if (_companies.Companies.Where(c => c.Guid != companyGuid).Any(company =>
+            {
+                var propertyValue = propertyInfo.GetValue(company);
+                return propertyValue != null && propertyValue.Equals(newValue);
+            }))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private sealed class SanitizeRequestUpdateCompanyResponse
+        {
+            public CompanyEntity? Company { get; set; }
+            public string ErrorMessage { get; set; } = string.Empty;
+            public required UpdateCompanyCode UpdateCompanyCode { get; set; }
         }
         #endregion Private methods
     }
