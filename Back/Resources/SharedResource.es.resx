@@ -150,6 +150,9 @@
   <data name="UnmodifiableProperty" xml:space="preserve">
     <value>La propiedad '{0}' no puede modificarse</value>
   </data>
+  <data name="UserDoesNotExist" xml:space="preserve">
+    <value>El usuario no existe</value>
+  </data>
   <data name="Vat" xml:space="preserve">
     <value>CifDni</value>
   </data>

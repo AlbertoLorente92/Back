@@ -18,12 +18,37 @@ namespace Back.Mappers
             };
         }
 
+        public static UserEntity MapToEntity(CreateUserRequest request, Guid guid, int id, string hashedPassword, string salt)
+        {
+            return new UserEntity
+            {
+                Guid = guid,
+                Id = id,
+                Name = request.Name,
+                LastName = request.LastName,
+                Email = request.Email,
+                Password = hashedPassword,
+                Salt = salt,
+                Deleted = false,
+                CreationDate = DateTime.UtcNow
+            };
+        }
+
         public static ErrorCodes Map(SaveCompanyCode source)
         {
             return source switch
             {
                 SaveCompanyCode.VatAlreadyExists => ErrorCodes.VatAlreadyExists,
                 SaveCompanyCode.UnknownError => ErrorCodes.UnknownError,
+                _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
+            };
+        }
+
+        public static ErrorCodes Map(SaveUserCode source)
+        {
+            return source switch
+            {
+                SaveUserCode.UnknownError => ErrorCodes.UnknownError,
                 _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
             };
         }
@@ -39,6 +64,15 @@ namespace Back.Mappers
                 UpdateCompanyCode.UniqueProperty => ErrorCodes.UniqueProperty,
                 UpdateCompanyCode.NonExistentProperty => ErrorCodes.NonExistentProperty,
                 UpdateCompanyCode.PropertyCastingError => ErrorCodes.PropertyCastingError,
+                _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
+            };
+        }
+
+        public static ErrorCodes Map(UpdateUserCode source)
+        {
+            return source switch
+            {
+                UpdateUserCode.UnknownError => ErrorCodes.UnknownError,
                 _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
             };
         }

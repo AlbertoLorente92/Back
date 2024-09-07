@@ -138,8 +138,8 @@ namespace Back.Controllers
             }
         }
 
-        [HttpPost("GetAllCompanies", Name = "GetAllCompanies")]
-        public ActionResult GetAllCompanies()
+        [HttpPost("GetCompanies", Name = "GetCompanies")]
+        public ActionResult GetCompanies()
         {
             try
             {
@@ -153,7 +153,7 @@ namespace Back.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "GetAllCompanies");
+                _logger.LogError(ex, "GetCompanies");
                 return Problem("An error occurred");
             }
         }
