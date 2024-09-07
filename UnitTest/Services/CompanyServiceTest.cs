@@ -160,7 +160,6 @@ namespace UnitTest.Services
             // Arrange
             var createCompanyRequest = new CreateCompanyRequest()
             {
-                ComercialName = "Company C",
                 Vat = "00000003R",
                 Name = "Company C",
             };
@@ -188,7 +187,6 @@ namespace UnitTest.Services
             // Arrange
             var createCompanyRequest = new CreateCompanyRequest()
             {
-                ComercialName = "Company C",
                 Vat = "00000001R",
                 Name = "Company C",
             };

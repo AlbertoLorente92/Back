@@ -152,7 +152,6 @@ namespace UnitTest.Controllers
             var createCompanyRequest = new CreateCompanyRequest()
             {
                 Name = "Company B",
-                ComercialName = "Company B",
                 Vat = "00000002R"
             };
 

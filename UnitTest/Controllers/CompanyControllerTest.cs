@@ -559,7 +559,6 @@ namespace UnitTest.Controllers
             var createCompanyRequest = new CreateCompanyRequest()
             {
                 Name = "Company",
-                ComercialName = "Company",
                 Vat = "00000001R"
             };
 
@@ -658,7 +657,6 @@ namespace UnitTest.Controllers
             var createCompanyRequest = new CreateCompanyRequest()
             {
                 Name = "Company",
-                ComercialName = "Company",
                 Vat = "00000001R"
             };
 
@@ -690,7 +688,6 @@ namespace UnitTest.Controllers
             var createCompanyRequest = new CreateCompanyRequest()
             {
                 Name = "Company",
-                ComercialName = "Company",
                 Vat = "00000001R"
             };
 

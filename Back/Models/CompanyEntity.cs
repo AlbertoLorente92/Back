@@ -11,7 +11,7 @@ namespace Back.Models
         [ColumnControlLabel(ColumnProperty.NotEmpty)]
         public required string Name { get; set; }
         [ColumnControlLabel(ColumnProperty.NotEmpty)]
-        public required string ComercialName { get; set; }
+        public string ComercialName { get; set; } = string.Empty;
         [ColumnControlLabel(ColumnProperty.Unique)]
         public required string Vat { get; set; }
         [ColumnControlLabel(ColumnProperty.NotEmpty)]
