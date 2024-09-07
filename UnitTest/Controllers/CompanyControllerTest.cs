@@ -731,5 +731,309 @@ namespace UnitTest.Controllers
             Assert.That(objectResult?.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
         }
         #endregion CreateCompany method
+
+        #region UpdateCompany method
+        [Test]
+        public void UpdateCompany_WithEverythingCorrect_ShouldReturnOk()
+        {
+            // Arrange
+            var updateCompanyRequestEncrypted = "updateCompanyRequestEncrypted";
+            var updateCompanyRequest = new UpdateCompanyRequest()
+            {
+                Guid = Guid.NewGuid(),
+                Data = new() { { "Name", "Company" } }
+            };
+
+            var companyUpdated = new CompanyEntity()
+            {
+                Name = "Company",
+                ComercialName = "Company",
+                Vat = "00000001R",
+                Guid = Guid.NewGuid(),
+                CreationDate = DateTime.UtcNow,
+                Id = 1,
+                Deleted = false,
+            };
+
+            var updateCompanyResponse = new UpdateCompanyResponse()
+            {
+                UpdateCompanyCode = UpdateCompanyCode.Ok,
+                Company = companyUpdated
+            };
+
+            _encryptionService.Setup(x => x.DecryptAndDeserialize<UpdateCompanyRequest>(It.IsAny<string>())).Returns(updateCompanyRequest);
+            _companyService.Setup(x => x.UpdateCompany(It.IsAny<UpdateCompanyRequest>())).Returns(updateCompanyResponse);
+            _encryptionService.Setup(x => x.SerielizeAndEncrypt(It.IsAny<object>())).Returns(JsonConvert.SerializeObject(companyUpdated));
+
+
+            // Act
+            var result = _controller.UpdateCompany(updateCompanyRequestEncrypted);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var okResult = result as OkObjectResult;
+            var okResultValue = JsonConvert.DeserializeObject<CompanyEntity>((string?)(okResult?.Value)!);
+
+            Assert.That(okResultValue, Is.InstanceOf<CompanyEntity>());
+            Assert.That(okResultValue, Is.EqualTo(companyUpdated));
+        }
+        
+        [Test]
+        public void UpdateCompany_WhenPayloadIsNull_ShouldBadRequest()
+        {
+            // Arrange
+
+
+            // Act
+            var result = _controller.UpdateCompany(null!);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var badRequestObjectResult = result as BadRequestObjectResult;
+            var badRequestValue = badRequestObjectResult?.Value as ErrorResponse;
+
+            Assert.That(badRequestValue?.ErrorCode, Is.EqualTo(ErrorCodes.PayloadIsMissing));
+        }
+        
+        [Test]
+        public void UpdateCompany_WhenPayloadIsEmpty_ShouldBadRequest()
+        {
+            // Arrange
+
+
+            // Act
+            var result = _controller.UpdateCompany(string.Empty);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var badRequestObjectResult = result as BadRequestObjectResult;
+            var badRequestValue = badRequestObjectResult?.Value as ErrorResponse;
+
+            Assert.That(badRequestValue?.ErrorCode, Is.EqualTo(ErrorCodes.PayloadIsMissing));
+        }
+        
+        [Test]
+        public void UpdateCompany_WithErrorWhenDecrypt_ShouldBadRequest()
+        {
+            // Arrange
+            var updateCompanyRequestEncrypted = "updateCompanyRequestEncrypted";
+
+            _encryptionService.Setup(x => x.DecryptAndDeserialize<UpdateCompanyRequest>(It.IsAny<string>())).Returns((UpdateCompanyRequest)null!);
+
+            // Act
+            var result = _controller.UpdateCompany(updateCompanyRequestEncrypted);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var badRequestObjectResult = result as BadRequestObjectResult;
+            var badRequestValue = badRequestObjectResult?.Value as ErrorResponse;
+
+            Assert.That(badRequestValue?.ErrorCode, Is.EqualTo(ErrorCodes.PayloadDecryptionFailed));
+        }
+
+        [Test]
+        public void UpdateCompany_WhenCompanyDoesNotExist_ShouldReturnBadRequest()
+        {
+            // Arrange
+            var updateCompanyRequestEncrypted = "updateCompanyRequestEncrypted";
+            var updateCompanyRequest = new UpdateCompanyRequest()
+            {
+                Guid = Guid.NewGuid(),
+                Data = new() { { "Vat", "00000001R" } }
+            };
+
+            var updateCompanyResponse = new UpdateCompanyResponse()
+            {
+                UpdateCompanyCode = UpdateCompanyCode.CompanyDoesNotExist,
+                Company = null
+            };
+
+            _encryptionService.Setup(x => x.DecryptAndDeserialize<UpdateCompanyRequest>(It.IsAny<string>())).Returns(updateCompanyRequest);
+            _companyService.Setup(x => x.UpdateCompany(It.IsAny<UpdateCompanyRequest>())).Returns(updateCompanyResponse);
+
+            // Act
+            var result = _controller.UpdateCompany(updateCompanyRequestEncrypted);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var badRequestObjectResult = result as BadRequestObjectResult;
+            var badRequestValue = badRequestObjectResult?.Value as ErrorResponse;
+
+            Assert.That(badRequestValue?.ErrorCode, Is.EqualTo(ErrorCodes.CompanyDoesNotExist));
+        }
+
+        [Test]
+        public void UpdateCompany_WhenUniqueProperty_ShouldReturnBadRequest()
+        {
+            // Arrange
+            var updateCompanyRequestEncrypted = "updateCompanyRequestEncrypted";
+            var updateCompanyRequest = new UpdateCompanyRequest()
+            {
+                Guid = Guid.NewGuid(),
+                Data = new() {{ "Vat", "00000001R" } }
+            };
+
+            var updateCompanyResponse = new UpdateCompanyResponse()
+            {
+                UpdateCompanyCode = UpdateCompanyCode.UniqueProperty,
+                Company = null
+            };
+
+            _encryptionService.Setup(x => x.DecryptAndDeserialize<UpdateCompanyRequest>(It.IsAny<string>())).Returns(updateCompanyRequest);
+            _companyService.Setup(x => x.UpdateCompany(It.IsAny<UpdateCompanyRequest>())).Returns(updateCompanyResponse);
+
+            // Act
+            var result = _controller.UpdateCompany(updateCompanyRequestEncrypted);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var badRequestObjectResult = result as BadRequestObjectResult;
+            var badRequestValue = badRequestObjectResult?.Value as ErrorResponse;
+
+            Assert.That(badRequestValue?.ErrorCode, Is.EqualTo(ErrorCodes.UniqueProperty));
+        }
+
+        [Test]
+        public void UpdateCompany_WhenUnmodifiableProperty_ShouldReturnBadRequest()
+        {
+            // Arrange
+            var updateCompanyRequestEncrypted = "updateCompanyRequestEncrypted";
+            var updateCompanyRequest = new UpdateCompanyRequest()
+            {
+                Guid = Guid.NewGuid(),
+                Data = new() { { "Vat", "00000001R" } }
+            };
+
+            var updateCompanyResponse = new UpdateCompanyResponse()
+            {
+                UpdateCompanyCode = UpdateCompanyCode.UnmodifiableProperty,
+                Company = null
+            };
+
+            _encryptionService.Setup(x => x.DecryptAndDeserialize<UpdateCompanyRequest>(It.IsAny<string>())).Returns(updateCompanyRequest);
+            _companyService.Setup(x => x.UpdateCompany(It.IsAny<UpdateCompanyRequest>())).Returns(updateCompanyResponse);
+
+            // Act
+            var result = _controller.UpdateCompany(updateCompanyRequestEncrypted);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var badRequestObjectResult = result as BadRequestObjectResult;
+            var badRequestValue = badRequestObjectResult?.Value as ErrorResponse;
+
+            Assert.That(badRequestValue?.ErrorCode, Is.EqualTo(ErrorCodes.UnmodifiableProperty));
+        }
+
+        [Test]
+        public void UpdateCompany_WhenPropertyCastingError_ShouldReturnBadRequest()
+        {
+            // Arrange
+            var updateCompanyRequestEncrypted = "updateCompanyRequestEncrypted";
+            var updateCompanyRequest = new UpdateCompanyRequest()
+            {
+                Guid = Guid.NewGuid(),
+                Data = new() { { "Vat", "00000001R" } }
+            };
+
+            var updateCompanyResponse = new UpdateCompanyResponse()
+            {
+                UpdateCompanyCode = UpdateCompanyCode.PropertyCastingError,
+                Company = null
+            };
+
+            _encryptionService.Setup(x => x.DecryptAndDeserialize<UpdateCompanyRequest>(It.IsAny<string>())).Returns(updateCompanyRequest);
+            _companyService.Setup(x => x.UpdateCompany(It.IsAny<UpdateCompanyRequest>())).Returns(updateCompanyResponse);
+
+            // Act
+            var result = _controller.UpdateCompany(updateCompanyRequestEncrypted);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var badRequestObjectResult = result as BadRequestObjectResult;
+            var badRequestValue = badRequestObjectResult?.Value as ErrorResponse;
+
+            Assert.That(badRequestValue?.ErrorCode, Is.EqualTo(ErrorCodes.PropertyCastingError));
+        }
+
+        [Test]
+        public void UpdateCompany_WhenNonExistentProperty_ShouldReturnBadRequest()
+        {
+            // Arrange
+            var updateCompanyRequestEncrypted = "updateCompanyRequestEncrypted";
+            var updateCompanyRequest = new UpdateCompanyRequest()
+            {
+                Guid = Guid.NewGuid(),
+                Data = new() { { "Vat", "00000001R" } }
+            };
+
+            var updateCompanyResponse = new UpdateCompanyResponse()
+            {
+                UpdateCompanyCode = UpdateCompanyCode.NonExistentProperty,
+                Company = null
+            };
+
+            _encryptionService.Setup(x => x.DecryptAndDeserialize<UpdateCompanyRequest>(It.IsAny<string>())).Returns(updateCompanyRequest);
+            _companyService.Setup(x => x.UpdateCompany(It.IsAny<UpdateCompanyRequest>())).Returns(updateCompanyResponse);
+
+            // Act
+            var result = _controller.UpdateCompany(updateCompanyRequestEncrypted);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var badRequestObjectResult = result as BadRequestObjectResult;
+            var badRequestValue = badRequestObjectResult?.Value as ErrorResponse;
+
+            Assert.That(badRequestValue?.ErrorCode, Is.EqualTo(ErrorCodes.NonExistentProperty));
+        }
+        
+        [Test]
+        public void UpdateCompany_WhenUnknowErrorInCompanyService_ShouldReturnBadRequest()
+        {
+            // Arrange
+            var updateCompanyRequestEncrypted = "updateCompanyRequestEncrypted";
+            var updateCompanyRequest = new UpdateCompanyRequest()
+            {
+                Guid = Guid.NewGuid(),
+                Data = new() { { "key", "value"} }
+            };
+
+            var updateCompanyResponse = new UpdateCompanyResponse()
+            {
+                UpdateCompanyCode = UpdateCompanyCode.UnknownError,
+                Company = null
+            };
+
+            _encryptionService.Setup(x => x.DecryptAndDeserialize<UpdateCompanyRequest>(It.IsAny<string>())).Returns(updateCompanyRequest);
+            _companyService.Setup(x => x.UpdateCompany(It.IsAny<UpdateCompanyRequest>())).Returns(updateCompanyResponse);
+
+            // Act
+            var result = _controller.UpdateCompany(updateCompanyRequestEncrypted);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var badRequestObjectResult = result as BadRequestObjectResult;
+            var badRequestValue = badRequestObjectResult?.Value as ErrorResponse;
+
+            Assert.That(badRequestValue?.ErrorCode, Is.EqualTo(ErrorCodes.UnknownError));
+        }
+        
+        [Test]
+        public void UpdateCompany_WhenExceptionOccours_ShouldReturnProblem()
+        {
+            // Arrange
+            var updateCompanyRequestEncrypted = "updateCompanyRequestEncrypted";
+            _encryptionService.Setup(x => x.DecryptAndDeserialize<UpdateCompanyRequest>(It.IsAny<string>())).Throws(new Exception("exception"));
+
+            // Act
+            var result = _controller.UpdateCompany(updateCompanyRequestEncrypted);
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            var objectResult = result as ObjectResult;
+
+            Assert.That(objectResult?.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+        }
+        
+        #endregion UpdateCompany method
     }
 }
