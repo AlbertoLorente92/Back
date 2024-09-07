@@ -2,6 +2,7 @@
 using Back.Interfaces;
 using Back.Mappers;
 using Back.Models;
+using Microsoft.Extensions.Localization;
 using System.Reflection;
 
 namespace Back.Implementation
@@ -10,14 +11,17 @@ namespace Back.Implementation
     {
         private readonly ILogger _logger;
         private readonly ICompanies _companies;
+        private readonly IStringLocalizer<SharedResource> _sharedResources;
 
         public CompanyService(
             ILogger<CompanyService> logger
             , ICompanies companies
+            , IStringLocalizer<SharedResource> sharedResources
             )
         {
             _logger = logger;
             _companies = companies;
+            _sharedResources = sharedResources;
         }
 
         public CompanyEntity? GetCompanyById(int id)
@@ -50,7 +54,7 @@ namespace Back.Implementation
                 return new UpdateCompanyResponse() 
                 { 
                     UpdateCompanyCode = UpdateCompanyCode.CompanyDoesNotExist,
-                    ErrorMessage = "La empresa solicitada no existe"
+                    ErrorMessage = _sharedResources["CompanyDoesNotExist"]
                 };
             }
 
@@ -125,7 +129,7 @@ namespace Back.Implementation
                         return new SanitizeRequestUpdateCompanyResponse()
                         {
                             Company = null,
-                            ErrorMessage = $"La propiedad '{propertyName}' no existe en la entidad de empresas",
+                            ErrorMessage = string.Format(_sharedResources["NonExistentProperty"], _sharedResources[propertyName]),
                             UpdateCompanyCode = UpdateCompanyCode.NonExistentProperty
                         };
                     }
@@ -136,7 +140,7 @@ namespace Back.Implementation
                         return new SanitizeRequestUpdateCompanyResponse() 
                         {
                             Company = null,
-                            ErrorMessage = $"La propiedad '{propertyName}' no puede modificarse",
+                            ErrorMessage = string.Format(_sharedResources["UnmodifiableProperty"], _sharedResources[propertyName]),
                             UpdateCompanyCode = UpdateCompanyCode.UnmodifiableProperty
                         };
                     }
@@ -146,12 +150,12 @@ namespace Back.Implementation
                         return new SanitizeRequestUpdateCompanyResponse()
                         {
                             Company = null,
-                            ErrorMessage = $"El valor entregado para la propiedad '{propertyName}' ya existe en la base de datos",
+                            ErrorMessage = string.Format(_sharedResources["UniqueProperty"], _sharedResources[propertyName]),
                             UpdateCompanyCode = UpdateCompanyCode.UniqueProperty
                         };
                     }
 
-                    var convertedValue = Convert.ChangeType(newValue, propertyInfo.PropertyType);
+                    var convertedValue = Convert.ChangeType(newValue, propertyInfo!.PropertyType);
                     propertyInfo.SetValue(company, convertedValue);
                 }
 
@@ -166,7 +170,7 @@ namespace Back.Implementation
                 return new SanitizeRequestUpdateCompanyResponse()
                 {
                     Company = null,
-                    ErrorMessage = $"El valor entregado para la propiedad '{propertyName}' no es válido. Se espera un {propertyInfo?.PropertyType.Name}",
+                    ErrorMessage = string.Format(_sharedResources["PropertyCastingError"], _sharedResources[propertyName!], propertyInfo?.PropertyType.Name!),
                     UpdateCompanyCode = UpdateCompanyCode.PropertyCastingError
                 };
             }

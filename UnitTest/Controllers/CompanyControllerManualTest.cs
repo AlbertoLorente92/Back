@@ -2,11 +2,16 @@
 using Back.Implementation;
 using Back.Interfaces;
 using Back.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
+using System.Globalization;
+using System.Resources;
 
 namespace UnitTest.Controllers
 {
@@ -38,12 +43,24 @@ namespace UnitTest.Controllers
             mockConfiguration.Setup(config => config.GetSection("AesSecretKey")).Returns(mockSectionAesSecretKey.Object);
             mockConfiguration.Setup(config => config.GetSection("AesIV")).Returns(mockSectionAesIV.Object);
 
-            
 
             _realEncryptionService = new AesEncryptionService(mockConfiguration.Object);
             _realCompanies = new Companies(_realEncryptionService, mockConfiguration.Object);
-            _companyService = new CompanyService(new Mock<ILogger<CompanyService>>().Object, _realCompanies);
+
+
+            var resourceManager = new ResourceManager("Back.Resources.SharedResource", typeof(SharedResource).Assembly);
+            var sharedLocalizer = new Common.ResourceManagerStringLocalizer(resourceManager);
+
+
+            _companyService = new CompanyService(new Mock<ILogger<CompanyService>>().Object, _realCompanies, sharedLocalizer);
+
             _controller = new CompanyController(mockLogger.Object, _realEncryptionService, mockConfiguration.Object, _companyService);
+            var httpContext = new DefaultHttpContext();
+            httpContext.Request.Headers["Accept-Language"] = "en";
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = httpContext
+            };
         }
 
         [Test]
@@ -174,7 +191,7 @@ namespace UnitTest.Controllers
 
             var companyEntity = _realEncryptionService.DecryptAndDeserialize<CompanyEntity>((string)okObjectResult?.Value!);
 
-            Console.WriteLine(companyEntity.ToString());
+            Console.WriteLine(companyEntity!.ToString());
         }
 
         [Test]
@@ -196,8 +213,8 @@ namespace UnitTest.Controllers
             var badRequestObjectResult = result as BadRequestObjectResult;
             var response = badRequestObjectResult?.Value as ErrorResponse;
 
-            Console.WriteLine(response.ErrorCode.ToString());
-            Console.WriteLine(response.Message.ToString());
+            Console.WriteLine(response!.ErrorCode.ToString());
+            Console.WriteLine(response!.Message.ToString());
         }
 
         [Test]
@@ -219,8 +236,8 @@ namespace UnitTest.Controllers
             var badRequestObjectResult = result as BadRequestObjectResult;
             var response = badRequestObjectResult?.Value as ErrorResponse;
 
-            Console.WriteLine(response.ErrorCode.ToString());
-            Console.WriteLine(response.Message.ToString());
+            Console.WriteLine(response!.ErrorCode.ToString());
+            Console.WriteLine(response!.Message.ToString());
         }
 
         [Test]
@@ -242,8 +259,8 @@ namespace UnitTest.Controllers
             var badRequestObjectResult = result as BadRequestObjectResult;
             var response = badRequestObjectResult?.Value as ErrorResponse;
 
-            Console.WriteLine(response.ErrorCode.ToString());
-            Console.WriteLine(response.Message.ToString());
+            Console.WriteLine(response!.ErrorCode.ToString());
+            Console.WriteLine(response!.Message.ToString());
         }
     }
 }
