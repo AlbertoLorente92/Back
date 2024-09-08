@@ -129,11 +129,17 @@
   <data name="Deleted" xml:space="preserve">
     <value>Borrado</value>
   </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
   <data name="Guid" xml:space="preserve">
     <value>Guid</value>
   </data>
   <data name="Id" xml:space="preserve">
     <value>Id</value>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Apellidos</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>Nombre</value>
@@ -141,14 +147,23 @@
   <data name="NonExistentProperty" xml:space="preserve">
     <value>La propiedad '{0}' no existe en la entidad de empresas</value>
   </data>
+  <data name="Password" xml:space="preserve">
+    <value>Contraseña</value>
+  </data>
   <data name="PropertyCastingError" xml:space="preserve">
     <value>El valor entregado para la propiedad '{0}' no es válido. Se espera un {1}</value>
+  </data>
+  <data name="Salt" xml:space="preserve">
+    <value>Salt</value>
   </data>
   <data name="UniqueProperty" xml:space="preserve">
     <value>El valor entregado para la propiedad '{0}' ya existe en la base de datos</value>
   </data>
   <data name="UnmodifiableProperty" xml:space="preserve">
     <value>La propiedad '{0}' no puede modificarse</value>
+  </data>
+  <data name="UserDoesNotExist" xml:space="preserve">
+    <value>El usuario no existe</value>
   </data>
   <data name="Vat" xml:space="preserve">
     <value>CifDni</value>

@@ -311,7 +311,7 @@ namespace UnitTest.Controllers
             var companyVat = "00000001R";
 
             _encryptionService.Setup(x => x.Decrypt(It.IsAny<string>())).Returns(companyVat);
-            _companyService.Setup(x => x.GetCompanyById(It.IsAny<int>())).Returns((CompanyEntity)null!);
+            _companyService.Setup(x => x.GetCompanyByVat(It.IsAny<string>())).Returns((CompanyEntity)null!);
 
             // Act
             var result = _controller.GetCompanyByVat(getCompanyByVat);
@@ -456,7 +456,7 @@ namespace UnitTest.Controllers
             var companyGuid = Guid.NewGuid();
 
             _encryptionService.Setup(x => x.Decrypt(It.IsAny<string>())).Returns(companyGuid.ToString());
-            _companyService.Setup(x => x.GetCompanyById(It.IsAny<int>())).Returns((CompanyEntity)null!);
+            _companyService.Setup(x => x.GetCompanyByGuid(It.IsAny<Guid>())).Returns((CompanyEntity)null!);
 
             // Act
             var result = _controller.GetCompanyByGuid(getCompanyByGuid);
@@ -484,9 +484,9 @@ namespace UnitTest.Controllers
         }
         #endregion GetCompanyByVat method
 
-        #region GetAllCompanies method
+        #region GetCompanies method
         [Test]
-        public void GetAllCompanies_WithEverythingCorrect_ShouldReturnOk()
+        public void GetCompanies_WithEverythingCorrect_ShouldReturnOk()
         {
             // Arrange
             var companies = new List<CompanyEntity>() { 
@@ -505,7 +505,7 @@ namespace UnitTest.Controllers
             _encryptionService.Setup(x => x.SerielizeAndEncrypt(It.IsAny<object>())).Returns(JsonConvert.SerializeObject(companies));
 
             // Act
-            var result = _controller.GetAllCompanies();
+            var result = _controller.GetCompanies();
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -520,13 +520,13 @@ namespace UnitTest.Controllers
         }
 
         [Test]
-        public void GetAllCompanies_WhenCompaniesDoesNotExists_ShouldReturnNotFound()
+        public void GetCompanies_WhenCompaniesDoesNotExists_ShouldReturnNotFound()
         {
             // Arrange
             _companyService.Setup(x => x.GetCompanies()).Returns((List<CompanyEntity>)null!);
 
             // Act
-            var result = _controller.GetAllCompanies();
+            var result = _controller.GetCompanies();
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -534,13 +534,13 @@ namespace UnitTest.Controllers
         }
 
         [Test]
-        public void GetAllCompanies_WhenExceptionOccours_ShouldReturnProblem()
+        public void GetCompanies_WhenExceptionOccours_ShouldReturnProblem()
         {
             // Arrange
             _companyService.Setup(x => x.GetCompanies()).Throws(new Exception("exception"));
 
             // Act
-            var result = _controller.GetAllCompanies();
+            var result = _controller.GetCompanies();
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -548,7 +548,7 @@ namespace UnitTest.Controllers
 
             Assert.That(objectResult?.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
         }
-        #endregion GetAllCompanies method
+        #endregion GetCompanies method
 
         #region CreateCompany method
         [Test]

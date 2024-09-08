@@ -130,7 +130,7 @@ namespace UnitTest.Controllers
 
 
             // Act
-            var result = _controller.GetAllCompanies();
+            var result = _controller.GetCompanies();
 
             // Assert
             var okObjectResult = result as OkObjectResult;

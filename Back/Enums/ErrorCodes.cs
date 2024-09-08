@@ -38,6 +38,19 @@ namespace Back.Enums
         [Description("Company does not exists on database")]
         CompanyDoesNotExist = 2002,
         #endregion Update
-        #endregion General errors
+        #endregion Company errors
+
+
+        
+        #region User errors
+        #region Create
+        [Description("Email already exists on database")]
+        EmailAlreadyExists = 3001,
+        #endregion Create
+        #region Update
+        [Description("User does not exists on database")]
+        UserDoesNotExist = 3002,
+        #endregion Update
+        #endregion User errors
     }
 }
