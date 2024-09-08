@@ -126,7 +126,7 @@ namespace Back.Implementation
                     propertyName = update.Key;
                     object? newValue = update.Value;
 
-                    propertyInfo = typeof(CompanyEntity).GetProperty(propertyName);
+                    propertyInfo = typeof(UserEntity).GetProperty(propertyName);
                     if (propertyInfo == null || !propertyInfo.CanWrite)
                     {
                         return new SanitizeRequestUpdateUserResponse()
