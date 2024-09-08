@@ -311,7 +311,7 @@ namespace UnitTest.Controllers
             var companyVat = "00000001R";
 
             _encryptionService.Setup(x => x.Decrypt(It.IsAny<string>())).Returns(companyVat);
-            _companyService.Setup(x => x.GetCompanyById(It.IsAny<int>())).Returns((CompanyEntity)null!);
+            _companyService.Setup(x => x.GetCompanyByVat(It.IsAny<string>())).Returns((CompanyEntity)null!);
 
             // Act
             var result = _controller.GetCompanyByVat(getCompanyByVat);
@@ -456,7 +456,7 @@ namespace UnitTest.Controllers
             var companyGuid = Guid.NewGuid();
 
             _encryptionService.Setup(x => x.Decrypt(It.IsAny<string>())).Returns(companyGuid.ToString());
-            _companyService.Setup(x => x.GetCompanyById(It.IsAny<int>())).Returns((CompanyEntity)null!);
+            _companyService.Setup(x => x.GetCompanyByGuid(It.IsAny<Guid>())).Returns((CompanyEntity)null!);
 
             // Act
             var result = _controller.GetCompanyByGuid(getCompanyByGuid);

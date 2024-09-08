@@ -12,11 +12,11 @@ namespace Back.Controllers
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly ILogger<CompanyController> _logger;
+        private readonly ILogger<UserController> _logger;
         private readonly ITextEncryptionService _textEncryption;
         private readonly IUserService _userService;
         public UserController(
-            ILogger<CompanyController> logger
+            ILogger<UserController> logger
             , ITextEncryptionService textEncryption
             , IConfiguration configuration
             , IUserService userService)

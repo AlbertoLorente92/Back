@@ -55,6 +55,8 @@ namespace Back.Models
                 $"Name:         {Name}\n" +
                 $"LastName:     {LastName}\n" +
                 $"Email:        {Email}\n" +
+                $"Password:     {Password}\n" +
+                $"Salt:         {Salt}\n" +
                 $"Deleted:      {Deleted}\n" +
                 $"CreationDate: {CreationDate}";
         }

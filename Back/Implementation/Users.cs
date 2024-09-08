@@ -8,7 +8,7 @@ namespace Back.Implementation
     {
         private List<UserEntity>? _users = null;
 
-        private const string USERS_FILE = "Users";
+        private const string USERS_FILE = "UsersFile";
         private readonly string _filePath;
         private readonly ITextEncryptionService _textEncryptionService;
 

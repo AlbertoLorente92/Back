@@ -49,6 +49,7 @@ namespace Back.Mappers
             return source switch
             {
                 SaveUserCode.UnknownError => ErrorCodes.UnknownError,
+                SaveUserCode.EmailAlreadyExists => ErrorCodes.EmailAlreadyExists,
                 _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
             };
         }
@@ -72,7 +73,12 @@ namespace Back.Mappers
         {
             return source switch
             {
+                UpdateUserCode.UserDoesNotExist => ErrorCodes.UserDoesNotExist,
                 UpdateUserCode.UnknownError => ErrorCodes.UnknownError,
+                UpdateUserCode.UnmodifiableProperty => ErrorCodes.UnmodifiableProperty,
+                UpdateUserCode.UniqueProperty => ErrorCodes.UniqueProperty,
+                UpdateUserCode.NonExistentProperty => ErrorCodes.NonExistentProperty,
+                UpdateUserCode.PropertyCastingError => ErrorCodes.PropertyCastingError,
                 _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
             };
         }
