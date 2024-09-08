@@ -129,11 +129,17 @@
   <data name="Deleted" xml:space="preserve">
     <value>Deleted</value>
   </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
   <data name="Guid" xml:space="preserve">
     <value>Guid</value>
   </data>
   <data name="Id" xml:space="preserve">
     <value>Id</value>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Last name</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>Name</value>
@@ -141,14 +147,23 @@
   <data name="NonExistentProperty" xml:space="preserve">
     <value>The property '{0}' does not exists in the company entity</value>
   </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
   <data name="PropertyCastingError" xml:space="preserve">
     <value>The value given for the property '{0}' is not valid. A '{1}' was expected</value>
+  </data>
+  <data name="Salt" xml:space="preserve">
+    <value>Salt</value>
   </data>
   <data name="UniqueProperty" xml:space="preserve">
     <value>The value given for the property '{0}' is already on the database</value>
   </data>
   <data name="UnmodifiableProperty" xml:space="preserve">
     <value>The property '{0}' can not be modify</value>
+  </data>
+  <data name="UserDoesNotExist" xml:space="preserve">
+    <value>User does not exists</value>
   </data>
   <data name="Vat" xml:space="preserve">
     <value>Vat</value>
