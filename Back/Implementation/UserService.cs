@@ -79,7 +79,16 @@ namespace Back.Implementation
             return new UpdateUserResponse() { UpdateUserCode = UpdateUserCode.UnknownError };
         }
 
-        
+        public bool IsUserLoginCorrect(string email, string password)
+        {
+            var user = GetUserByEmail(email);
+            if(user == null)
+            {
+                return false;
+            }
+
+            return _passwordHashService.VerifyPassword(password, user.Password, user.Salt);
+        }
 
         #region Private methods
         private CreateUserResponse SaveNewUser(CreateUserRequest userRequest)

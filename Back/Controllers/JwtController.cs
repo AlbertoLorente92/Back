@@ -1,25 +1,26 @@
 using Back.Common;
 using Back.Interfaces;
+using Back.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Back.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class JwtTokenController : ControllerBase
+    public class JwtController : ControllerBase
     {
-        private readonly ILogger<CompanyController> _logger;
+        private readonly ILogger<JwtController> _logger;
         private readonly ITextEncryptionService _textEncryption;
-        private readonly IJwtTokenService _jwtTokenService;
-        public JwtTokenController(
-            ILogger<CompanyController> logger
+        private readonly IJwtService _jwtService;
+        public JwtController(
+            ILogger<JwtController> logger
             , ITextEncryptionService textEncryption
             , IConfiguration configuration
-            , IJwtTokenService jwtTokenService)
+            , IJwtService jwtService)
         {
             _logger = logger;
             _textEncryption = textEncryption;
-            _jwtTokenService = jwtTokenService;
+            _jwtService = jwtService;
         }
 
         #region Get methods
@@ -33,16 +34,20 @@ namespace Back.Controllers
 
             try
             {
-                var credentials = _textEncryption.Decrypt(encryptedCredentials);
+                var credentials = _textEncryption.DecryptAndDeserialize<GetTokenRequest>(encryptedCredentials);
 
                 if (credentials == null)
                 {
                     return ApiResponseHelper.BadRequestDecryptionFailed();
                 }
 
+                var token = _jwtService.GetToken(credentials);
+                if (token != null)
+                {
+                    return Ok(_textEncryption.Encrypt(token));
+                }
 
-
-                return NotFound();
+                return BadRequest();
             }
             catch(Exception ex) 
             {

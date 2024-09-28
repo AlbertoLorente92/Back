@@ -10,5 +10,6 @@ namespace Back.Interfaces
         public List<UserEntity> GetUsers();
         public CreateUserResponse CreateUser(CreateUserRequest request);
         public UpdateUserResponse UpdateUser(UpdateUserRequest request);
+        public bool IsUserLoginCorrect(string email, string password);
     }
 }
