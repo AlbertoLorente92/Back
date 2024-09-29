@@ -24,6 +24,7 @@ namespace UnitTest.Controllers
         private IUsers _realUsers;
         private IUserService _userService;
         private IPasswordHashService _passwordHashService;
+        private IKeyVaultService _keyVaultService;
 
         [SetUp]
         public void Setup()
@@ -44,8 +45,8 @@ namespace UnitTest.Controllers
             mockConfiguration.Setup(config => config.GetSection("AesSecretKey")).Returns(mockSectionAesSecretKey.Object);
             mockConfiguration.Setup(config => config.GetSection("AesIV")).Returns(mockSectionAesIV.Object);
 
-
-            _realEncryptionService = new AesEncryptionService(mockConfiguration.Object);
+            _keyVaultService = new KeyVaultService(mockConfiguration.Object);
+            _realEncryptionService = new AesEncryptionService(mockConfiguration.Object, _keyVaultService);
             _realUsers = new Users(_realEncryptionService, mockConfiguration.Object);
 
 
