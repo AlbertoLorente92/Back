@@ -1,6 +1,6 @@
 ### GetWeather endpoint from WeatherForecast 
 GET https://localhost:7165/WeatherForecast/GetWeather
-X-API-KEY: 34f8ff10-a1a9-4e9f-bb3c-a7df1aec1827
+X-API-KEY: E3J4iUDDR27OZEjHexvrfGzmoOkzX90LajQOOg3dgU0Lg9iJO7V8adOBdbsrKecRxDkt6Ts2FCj82OYpUuYefkFE6ga1yft2RhkxZ3hJcBdw76AEmPfXkVwCOq15fsl1
 
 ### GetWeatherForDay endpoint from WeatherForecast 
 GET https://localhost:7165/WeatherForecast/GetWeatherForDay
@@ -16,4 +16,8 @@ X-API-KEY: 34f8ff10-a1a9-4e9f-bb3c-a7df1aec1827
 
 ### CreateCompany endpoint from CompanyController 
 POST https://localhost:7165/Company/CreateCompany?encryptedCompany=04A5p36xoKUyTVGQ2SJRPTXMhh1tRAriYTgAYJHxf6qm7rPvJzRHKcg3SfbBnujT%2FO%2FyZTWsx7%2BlXehRXJeQpfpPUPaAKSn6rbjdqke0zySx%2FIsype4YZb4%2FVfCkyac5BlZSILVEti3qmbJ7OhUMQ6wrilFMmJaN2mIPBSGV1z6IBAzkhCPM9NLXoXU4%2FC5immw7U27TKUdUoi0v2KdwD93Zc0WxUh%2F%2FRFBXx%2F5MDeM%3D
+X-API-KEY: 34f8ff10-a1a9-4e9f-bb3c-a7df1aec1827
+
+### Secrets
+GET https://localhost:7165/WeatherForecast/GetWeatherSecret
 X-API-KEY: 34f8ff10-a1a9-4e9f-bb3c-a7df1aec1827
