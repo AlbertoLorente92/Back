@@ -13,14 +13,16 @@ namespace UnitTest.Controllers
     {
         private WeatherForecastController _controller;
         private Mock<ITextEncryptionService> _encryptionService;
+        private Mock<IKeyVaultService> _keyVaultService;
 
         [SetUp]
         public void Setup()
         {
             var mockLogger = new Mock<ILogger<WeatherForecastController>>();
             _encryptionService = new Mock<ITextEncryptionService>();
+            _keyVaultService = new Mock<IKeyVaultService>();
 
-            _controller = new WeatherForecastController(mockLogger.Object, _encryptionService.Object);
+            _controller = new WeatherForecastController(mockLogger.Object, _encryptionService.Object, _keyVaultService.Object);
         }
 
         [Test]

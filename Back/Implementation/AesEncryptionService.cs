@@ -7,21 +7,27 @@ namespace Back.Implementation
 {
     public class AesEncryptionService : ITextEncryptionService
     {
-        private const string AES_SECRET_KEY = "AesSecretKey";
-        private const string AES_IV_SECRET_KEY = "AesIV";
+        private const string AES_SECRET_KEY = "KV:AesSecretKey";
+        private const string AES_IV_SECRET_KEY = "KV:AesIV";
 
         private readonly ICryptoTransform _decryptor;
         private readonly ICryptoTransform _encryptor;
+        private readonly IKeyVaultService _keyVaultService;
 
-        public AesEncryptionService(IConfiguration configuration)
+        public AesEncryptionService(IConfiguration configuration, IKeyVaultService keyVaultService)
         {
-            var aesSecretKey = configuration.GetValue<string>(AES_SECRET_KEY) ?? string.Empty;
-            var aesIV = configuration.GetValue<string>(AES_IV_SECRET_KEY) ?? string.Empty;
+            var aesSecretKeySecret = configuration.GetValue<string>(AES_SECRET_KEY) ?? string.Empty;
+            var aesIVSecret = configuration.GetValue<string>(AES_IV_SECRET_KEY) ?? string.Empty;
+
+            var aesSecretKey = keyVaultService.GetSecret(aesSecretKeySecret);
+            var aesIV = keyVaultService.GetSecret(aesIVSecret);
+
             using var aesAlg = Aes.Create();
-            aesAlg.Key = Encoding.UTF8.GetBytes(aesSecretKey);
-            aesAlg.IV = Encoding.UTF8.GetBytes(aesIV);
+            aesAlg.Key = Encoding.UTF8.GetBytes(aesSecretKey!);
+            aesAlg.IV = Encoding.UTF8.GetBytes(aesIV!);
             _encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
             _decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+            _keyVaultService = keyVaultService;
         }
 
         public string Decrypt(string encriptMessage)

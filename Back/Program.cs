@@ -14,8 +14,7 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<ITextEncryptionService>(provider =>
-    new AesEncryptionService(builder.Configuration));
+
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 builder.Services.Configure<RequestLocalizationOptions>(options =>
@@ -26,6 +25,8 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.AddSupportedUICultures(supportedCultures);
 });
 
+builder.Services.AddSingleton<IKeyVaultService, KeyVaultService>();
+builder.Services.AddScoped<ITextEncryptionService, AesEncryptionService>();
 
 var app = builder.Build();
 

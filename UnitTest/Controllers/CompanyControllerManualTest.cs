@@ -43,8 +43,8 @@ namespace UnitTest.Controllers
             mockConfiguration.Setup(config => config.GetSection("AesSecretKey")).Returns(mockSectionAesSecretKey.Object);
             mockConfiguration.Setup(config => config.GetSection("AesIV")).Returns(mockSectionAesIV.Object);
 
-
-            _realEncryptionService = new AesEncryptionService(mockConfiguration.Object);
+            var mockKeyVaultService = new Mock<IKeyVaultService>();
+            _realEncryptionService = new AesEncryptionService(mockConfiguration.Object, mockKeyVaultService.Object);
             _realCompanies = new Companies(_realEncryptionService, mockConfiguration.Object);
 
 

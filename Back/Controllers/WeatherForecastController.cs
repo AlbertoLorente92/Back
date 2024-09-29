@@ -16,13 +16,16 @@ namespace Back.Controllers
 
         private readonly ILogger<WeatherForecastController> _logger;
         private readonly ITextEncryptionService _messageEncryption;
+        private readonly IKeyVaultService _keyVaultService;
 
         public WeatherForecastController(
             ILogger<WeatherForecastController> logger
-            , ITextEncryptionService messageEncryption)
+            ,ITextEncryptionService messageEncryption
+            ,IKeyVaultService keyVaultService)
         {
             _logger = logger;
             _messageEncryption = messageEncryption;
+            _keyVaultService = keyVaultService;
         }
 
         [HttpGet("GetWeather", Name = "GetWeather")]
@@ -83,6 +86,12 @@ namespace Back.Controllers
             {
                 return BadRequest($"An error occurred: {ex.Message}");
             }
+        }
+
+        [HttpGet("GetWeatherSecret", Name = "GetWeatherSecret")]
+        public async Task<ActionResult> GetWeatherSecret()
+        {
+            return Ok(await _keyVaultService.GetSecretAsync("Prueba"));
         }
     }
 }

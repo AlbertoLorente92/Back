@@ -1,4 +1,5 @@
 ﻿using Back.Implementation;
+using Back.Interfaces;
 using Back.Models;
 using Microsoft.Extensions.Configuration;
 using Moq;
@@ -10,7 +11,6 @@ namespace UnitTest.Services
     public class AesEncryptionServiceTest
     {
         private AesEncryptionService _aesEncryptionService;
-
         private const string PLAIN_TEXT = "Lorem ipsum odor amet, consectetuer adipiscing elit. " +
                 "Cubilia finibus inceptos mi sit gravida, interdum cras. " +
                 "Varius iaculis lacus eleifend per pharetra penatibus quam posuere donec. " +
@@ -23,15 +23,28 @@ namespace UnitTest.Services
         {
             var mockSectionAesSecretKey = new Mock<IConfigurationSection>();
             mockSectionAesSecretKey.Setup(x => x.Value).Returns("AAAAAAAAAAAAAAAAAAAAAAAA");
+            //mockSectionAesSecretKey.Setup(x => x.Value).Returns("AesSecretKey");
 
             var mockSectionAesIV = new Mock<IConfigurationSection>();
             mockSectionAesIV.Setup(x => x.Value).Returns("AAAAAAAAAAAAAAAA");
+            //mockSectionAesIV.Setup(x => x.Value).Returns("SectionAesIV");
+
+            var kvAddres = new Mock<IConfigurationSection>();
+            kvAddres.Setup(x => x.Value).Returns("AAAAAAAAAAAAAAAA");
 
             var _mockConfiguration = new Mock<IConfiguration>();
-            _mockConfiguration.Setup(config => config.GetSection("AesSecretKey")).Returns(mockSectionAesSecretKey.Object);
-            _mockConfiguration.Setup(config => config.GetSection("AesIV")).Returns(mockSectionAesIV.Object);
+            _mockConfiguration.Setup(config => config.GetSection("KV:AesSecretKey")).Returns(mockSectionAesSecretKey.Object);
+            _mockConfiguration.Setup(config => config.GetSection("KV:AesIV")).Returns(mockSectionAesIV.Object);
+            _mockConfiguration.Setup(config => config.GetSection("KV_ADDRESS")).Returns(kvAddres.Object);
 
-            _aesEncryptionService = new AesEncryptionService(_mockConfiguration.Object);
+            var keyVaultService = new Mock<IKeyVaultService>();
+            keyVaultService
+                .Setup(service => service.GetSecret(It.IsAny<string>()))
+                .Returns((string secretName) => secretName);
+
+
+
+            _aesEncryptionService = new AesEncryptionService(_mockConfiguration.Object, keyVaultService.Object);
         }
 
         #region Encrypt method

@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Back.Interfaces;
+using System.Net;
 
 namespace Back.Middleware
 {
@@ -8,11 +9,13 @@ namespace Back.Middleware
         private const string API_KEY_HEADER_NAME = "X-API-KEY";
         private const string UNAUTHORIZED_RESPONSE = "API Key was not provided.";
         private const string FORBIDDEN_RESPONSE = "Unauthorized client.";
-        private const string API_KEY_CONFIG = "ApiKey";
+        private const string API_KEY_CONFIG = "KV:ApiKey";
+        private readonly IKeyVaultService _keyVaultService;
 
-        public ApiKeyMiddleware(RequestDelegate next)
+        public ApiKeyMiddleware(RequestDelegate next, IKeyVaultService keyVaultService)
         {
             _next = next;
+            _keyVaultService = keyVaultService;
         }
 
         public async Task InvokeAsync(HttpContext context, IConfiguration configuration)
@@ -24,8 +27,8 @@ namespace Back.Middleware
                 return;
             }
 
-            var apiKey = configuration.GetValue<string>(API_KEY_CONFIG);
-
+            var apiKeySecret = configuration.GetValue<string>(API_KEY_CONFIG);
+            var apiKey = await _keyVaultService.GetSecretAsync(apiKeySecret!);
             if (apiKey == null || !apiKey.Equals(extractedApiKey))
             {
                 context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
