@@ -27,7 +27,7 @@ namespace Back.Controllers
         }
 
         #region Get methods
-        [HttpPost("GetCompanyById", Name = "GetCompanyById")]
+        [HttpGet("GetCompanyById", Name = "GetCompanyById")]
         public ActionResult GetCompanyById(string companyIdEncrypted)
         {
             if (string.IsNullOrEmpty(companyIdEncrypted))
@@ -64,7 +64,7 @@ namespace Back.Controllers
             }
         }
 
-        [HttpPost("GetCompanyByGuid", Name = "GetCompanyByGuid")]
+        [HttpGet("GetCompanyByGuid", Name = "GetCompanyByGuid")]
         public ActionResult GetCompanyByGuid(string companyGuidEncrypted)
         {
             if (string.IsNullOrEmpty(companyGuidEncrypted))
@@ -101,7 +101,7 @@ namespace Back.Controllers
             }
         }
 
-        [HttpPost("GetCompanyByVat", Name = "GetCompanyByVat")]
+        [HttpGet("GetCompanyByVat", Name = "GetCompanyByVat")]
         public ActionResult GetCompanyByVat(string companyVatEncrypted)
         {
             if (string.IsNullOrEmpty(companyVatEncrypted))
@@ -138,7 +138,7 @@ namespace Back.Controllers
             }
         }
 
-        [HttpPost("GetCompanies", Name = "GetCompanies")]
+        [HttpGet("GetCompanies", Name = "GetCompanies")]
         public ActionResult GetCompanies()
         {
             try

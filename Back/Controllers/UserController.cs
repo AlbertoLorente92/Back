@@ -27,7 +27,7 @@ namespace Back.Controllers
         }
 
         #region Get methods
-        [HttpPost("GetUserById", Name = "GetUserById")]
+        [HttpGet("GetUserById", Name = "GetUserById")]
         public ActionResult GetUserById(string userIdEncrypted)
         {
             if (string.IsNullOrEmpty(userIdEncrypted))
@@ -64,7 +64,7 @@ namespace Back.Controllers
             }
         }
 
-        [HttpPost("GetUserByGuid", Name = "GetUserByGuid")]
+        [HttpGet("GetUserByGuid", Name = "GetUserByGuid")]
         public ActionResult GetUserByGuid(string userGuidEncrypted)
         {
             if (string.IsNullOrEmpty(userGuidEncrypted))
@@ -101,7 +101,7 @@ namespace Back.Controllers
             }
         }
 
-        [HttpPost("GetUserByEmail", Name = "GetUserByEmail")]
+        [HttpGet("GetUserByEmail", Name = "GetUserByEmail")]
         public ActionResult GetUserByEmail(string userEmailEncrypted)
         {
             if (string.IsNullOrEmpty(userEmailEncrypted))
@@ -138,7 +138,7 @@ namespace Back.Controllers
             }
         }
 
-        [HttpPost("GetUsers", Name = "GetUsers")]
+        [HttpGet("GetUsers", Name = "GetUsers")]
         public ActionResult GetUsers()
         {
             try

@@ -26,7 +26,14 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 });
 
 builder.Services.AddSingleton<IKeyVaultService, KeyVaultService>();
-builder.Services.AddScoped<ITextEncryptionService, AesEncryptionService>();
+builder.Services.AddSingleton<IPasswordHashService, PasswordHashService>();
+builder.Services.AddSingleton<ITextEncryptionService, AesEncryptionService>();
+builder.Services.AddSingleton<IKeyVaultService, KeyVaultService>();
+
+builder.Services.AddScoped<ICompanies, Companies>();
+builder.Services.AddScoped<ICompanyService, CompanyService>();
+builder.Services.AddScoped<IUsers, Users>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
