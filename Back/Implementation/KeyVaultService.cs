@@ -42,9 +42,9 @@ namespace Back.Implementation
                 var secret = await client.GetSecretAsync(secretName);
                 return secret.Value.Value;
             }
-            catch
+            catch(Exception ex)
             {
-                return null;
+                return ex.Message;
             }
         }
     }

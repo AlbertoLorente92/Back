@@ -33,7 +33,7 @@ namespace Back.Middleware
             {
                 context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                 //await context.Response.WriteAsync(FORBIDDEN_RESPONSE);
-                await context.Response.WriteAsync($"KVApiKey: {apiKey}. apiKeySecret: {apiKeySecret}");
+                await context.Response.WriteAsync($"KVApiKey: '{apiKey ?? "Null"}'. ApiKeySecret: '{apiKeySecret}'");
                 return;
             }
 
