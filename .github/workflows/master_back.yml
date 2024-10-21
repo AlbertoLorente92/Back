@@ -24,6 +24,9 @@ jobs:
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
+      - name: List files
+        run: ls -R
+        
       - name: dotnet publish
         run: dotnet publish ./Back/Back/Back.csproj -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
