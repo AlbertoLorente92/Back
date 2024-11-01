@@ -24,11 +24,11 @@ jobs:
         run: dotnet restore
 
       - name: Run Unit Tests
-        run: dotnet test <D:/a/Back/Back/Back/UnitTest.csproj> --no-build --verbosity normal
+        run: dotnet test D:/a/Back/Back/Back/UnitTest.csproj --no-build --verbosity normal
         
   build:
     runs-on: windows-latest
-
+    needs: test
     steps:
       - uses: actions/checkout@v4
 
