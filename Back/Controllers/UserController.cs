@@ -55,7 +55,7 @@ namespace Back.Controllers
                     return Ok(_textEncryption.SerielizeAndEncrypt(user));
                 }
 
-                return NotFound(ApiResponseHelper.NotFound());
+                return ApiResponseHelper.NotFound();
             }
             catch(Exception ex) 
             {
@@ -92,7 +92,7 @@ namespace Back.Controllers
                     return Ok(_textEncryption.SerielizeAndEncrypt(user));
                 }
 
-                return NotFound(ApiResponseHelper.NotFound());
+                return ApiResponseHelper.NotFound();
             }
             catch (Exception ex)
             {
@@ -129,7 +129,7 @@ namespace Back.Controllers
                     return Ok(_textEncryption.SerielizeAndEncrypt(user));
                 }
 
-                return NotFound(ApiResponseHelper.NotFound());
+                return ApiResponseHelper.NotFound();
             }
             catch (Exception ex)
             {

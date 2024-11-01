@@ -10,21 +10,15 @@ namespace Back.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class CompanyController : ControllerBase
-    {
-        private readonly ILogger<CompanyController> _logger;
-        private readonly ITextEncryptionService _textEncryption;
-        private readonly ICompanyService _companyService;
-        public CompanyController(
-            ILogger<CompanyController> logger
+    public class CompanyController(
+        ILogger<CompanyController> logger
             , ITextEncryptionService textEncryption
             , IConfiguration configuration
-            , ICompanyService companyService)
-        {
-            _logger = logger;
-            _textEncryption = textEncryption;
-            _companyService = companyService;
-        }
+            , ICompanyService companyService) : ControllerBase
+    {
+        private readonly ILogger<CompanyController> _logger = logger;
+        private readonly ITextEncryptionService _textEncryption = textEncryption;
+        private readonly ICompanyService _companyService = companyService;
 
         #region Get methods
         [HttpGet("GetCompanyById", Name = "GetCompanyById")]
@@ -55,7 +49,7 @@ namespace Back.Controllers
                     return Ok(_textEncryption.SerielizeAndEncrypt(company));
                 }
 
-                return NotFound(ApiResponseHelper.NotFound());
+                return ApiResponseHelper.NotFound();
             }
             catch(Exception ex) 
             {
@@ -92,7 +86,7 @@ namespace Back.Controllers
                     return Ok(_textEncryption.SerielizeAndEncrypt(company));
                 }
 
-                return NotFound(ApiResponseHelper.NotFound());
+                return ApiResponseHelper.NotFound();
             }
             catch (Exception ex)
             {
@@ -129,7 +123,7 @@ namespace Back.Controllers
                     return Ok(_textEncryption.SerielizeAndEncrypt(company));
                 }
 
-                return NotFound(ApiResponseHelper.NotFound());
+                return ApiResponseHelper.NotFound();
             }
             catch (Exception ex)
             {
@@ -149,7 +143,7 @@ namespace Back.Controllers
                     return Ok(_textEncryption.SerielizeAndEncrypt(companies));
                 }
 
-                return NotFound(ApiResponseHelper.NotFound());
+                return ApiResponseHelper.NotFound();
             }
             catch (Exception ex)
             {

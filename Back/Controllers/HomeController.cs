@@ -6,14 +6,9 @@ namespace Back.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class HomeController : Controller
+    public class HomeController(IHostEnvironment env) : Controller
     {
-        private readonly IHostEnvironment _env;
-
-        public HomeController(IHostEnvironment env)
-        {
-            _env = env;
-        }
+        private readonly IHostEnvironment _env = env;
 
         [HttpGet]
         [Route("/")]
