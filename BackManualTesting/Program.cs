@@ -73,10 +73,9 @@ class Program
     {
         var createCompanyRequest = new CreateCompanyRequest() { Name = "Takitos", Vat = "Vat123" };
         var encryptedMsg = _textEncryptionService.SerielizeAndEncrypt(createCompanyRequest);
-        var response = await PostEntity<CreateCompanyResponse>($"Company/CreateCompany?encryptedCompanyCreationRequest={WebUtility.UrlEncode(encryptedMsg)}");
+        var response = await PostEntity<CompanyEntity>($"Company/CreateCompany?encryptedCompanyCreationRequest={WebUtility.UrlEncode(encryptedMsg)}");
         if (response != null) {
-            Console.WriteLine(response.SaveCompanyCode.ToString());
-            Console.WriteLine(response.Company == null ? "Company null" : response.Company.ToString());
+            Console.WriteLine(response.ToString());
         }
     }
 
