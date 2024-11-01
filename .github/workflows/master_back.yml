@@ -10,6 +10,22 @@ on:
   workflow_dispatch:
 
 jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Run Unit Tests
+        run: dotnet test <D:/a/Back/Back/Back/UnitTest.csproj> --no-build --verbosity normal
+        
   build:
     runs-on: windows-latest
 
