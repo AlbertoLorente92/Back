@@ -23,8 +23,18 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
+      - name: Build Unit Tests
+        run: dotnet build D:/a/Back/Back/UnitTest/UnitTest.csproj --configuration Debug
+        
       - name: Run Unit Tests
-        run: dotnet test D:/a/Back/Back/UnitTest/UnitTest.csproj --no-build --verbosity normal
+        run: dotnet test D:/a/Back/Back/UnitTest/UnitTest.csproj --no-build --verbosity normal --logger "trx;LogFileName=test_results.trx"
+
+      - name: Upload Test Results
+        if: failure() 
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          path: test_results.trx
         
   build:
     runs-on: windows-latest
