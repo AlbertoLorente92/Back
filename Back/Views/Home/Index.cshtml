@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Welcome to TACO API";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to TACO API</h1>
+        <p>
+            This API is designed to help you manage your resources effectively.
+            With various endpoints, you can interact with the underlying data structure,
+            perform CRUD operations, and ensure a seamless integration with your applications.
+        </p>
+        <p>
+            Use our API documentation to understand how to interact with the various endpoints
+            and make the most out of your experience. We are here to support you every step of the way!
+        </p>
+        <p>
+            <strong>Current Environment:</strong> @ViewBag.Environment
+        </p>
+    </div>
+</body>
+</html>
