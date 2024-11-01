@@ -55,12 +55,12 @@ namespace Back.Controllers
                     return Ok(_textEncryption.SerielizeAndEncrypt(company));
                 }
 
-                return NotFound("Company not found");
+                return NotFound(ApiResponseHelper.NotFound());
             }
             catch(Exception ex) 
             {
                 _logger.LogError(ex, "GetCompanyById");
-                return Problem("An error occurred");
+                return ApiResponseHelper.Error();
             }
         }
 
@@ -92,12 +92,12 @@ namespace Back.Controllers
                     return Ok(_textEncryption.SerielizeAndEncrypt(company));
                 }
 
-                return NotFound("Company not found");
+                return NotFound(ApiResponseHelper.NotFound());
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "GetCompanyByGuid");
-                return Problem("An error occurred");
+                return ApiResponseHelper.Error();
             }
         }
 
@@ -129,12 +129,12 @@ namespace Back.Controllers
                     return Ok(_textEncryption.SerielizeAndEncrypt(company));
                 }
 
-                return NotFound("Company not found");
+                return NotFound(ApiResponseHelper.NotFound());
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "GetCompanyByVat");
-                return Problem("An error occurred");
+                return ApiResponseHelper.Error();
             }
         }
 
@@ -149,12 +149,12 @@ namespace Back.Controllers
                     return Ok(_textEncryption.SerielizeAndEncrypt(companies));
                 }
 
-                return NotFound("Companies not found");
+                return NotFound(ApiResponseHelper.NotFound());
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "GetCompanies");
-                return Problem("An error occurred");
+                return ApiResponseHelper.Error();
             }
         }
         #endregion Get methods
@@ -189,7 +189,7 @@ namespace Back.Controllers
             catch(Exception ex)
             {
                 _logger.LogError(ex, "CreateCompany");
-                return Problem("An error occurred");
+                return ApiResponseHelper.Error();
             }
         }
 
@@ -222,7 +222,7 @@ namespace Back.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "UpdateCompany");
-                return Problem("An error occurred");
+                return ApiResponseHelper.Error();
             }
         }
         #endregion Post methods

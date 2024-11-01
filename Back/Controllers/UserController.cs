@@ -55,12 +55,12 @@ namespace Back.Controllers
                     return Ok(_textEncryption.SerielizeAndEncrypt(user));
                 }
 
-                return NotFound("User not found");
+                return NotFound(ApiResponseHelper.NotFound());
             }
             catch(Exception ex) 
             {
                 _logger.LogError(ex, "GetUserById");
-                return Problem("An error occurred");
+                return ApiResponseHelper.Error();
             }
         }
 
@@ -92,12 +92,12 @@ namespace Back.Controllers
                     return Ok(_textEncryption.SerielizeAndEncrypt(user));
                 }
 
-                return NotFound("User not found");
+                return NotFound(ApiResponseHelper.NotFound());
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "GetUserByGuid");
-                return Problem("An error occurred");
+                return ApiResponseHelper.Error();
             }
         }
 
@@ -129,12 +129,12 @@ namespace Back.Controllers
                     return Ok(_textEncryption.SerielizeAndEncrypt(user));
                 }
 
-                return NotFound("User not found");
+                return NotFound(ApiResponseHelper.NotFound());
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "GetUserByEmail");
-                return Problem("An error occurred");
+                return ApiResponseHelper.Error();
             }
         }
 
@@ -149,12 +149,12 @@ namespace Back.Controllers
                     return Ok(_textEncryption.SerielizeAndEncrypt(users));
                 }
 
-                return NotFound("Users not found");
+                return NotFound(ApiResponseHelper.NotFound());
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "GetUsers");
-                return Problem("An error occurred");
+                return ApiResponseHelper.Error();
             }
         }
         #endregion Get methods
@@ -189,7 +189,7 @@ namespace Back.Controllers
             catch(Exception ex)
             {
                 _logger.LogError(ex, "CreateUser");
-                return Problem("An error occurred");
+                return ApiResponseHelper.Error();
             }
         }
 
@@ -222,7 +222,7 @@ namespace Back.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "UpdateUser");
-                return Problem("An error occurred");
+                return ApiResponseHelper.Error();
             }
         }
         #endregion Post methods

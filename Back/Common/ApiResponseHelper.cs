@@ -21,5 +21,15 @@ namespace Back.Common
         {
             return new BadRequestObjectResult(new ErrorResponse(ErrorCodes.InvalidDecryptedData, ErrorCodes.InvalidDecryptedData.GetDescription()));
         }
+
+        public static ActionResult NotFound()
+        {
+            return new NotFoundObjectResult(new ErrorResponse(ErrorCodes.EntityNotFound, ErrorCodes.EntityNotFound.GetDescription()));
+        }
+
+        public static ActionResult Error()
+        {
+            return new ObjectResult(new ErrorResponse(ErrorCodes.UnknownError, ErrorCodes.UnknownError.GetDescription())) { StatusCode = 500 };
+        }
     }
 }

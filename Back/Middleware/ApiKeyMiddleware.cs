@@ -45,8 +45,7 @@ namespace Back.Middleware
             if (apiKey == null || !apiKey.Equals(extractedApiKey))
             {
                 context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                //await context.Response.WriteAsync(FORBIDDEN_RESPONSE);
-                await context.Response.WriteAsync($"KVApiKey: '{apiKey ?? "Null"}'. ApiKeySecret: '{apiKeySecret}'");
+                await context.Response.WriteAsync(FORBIDDEN_RESPONSE);
                 return;
             }
 

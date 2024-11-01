@@ -25,6 +25,8 @@ namespace Back.Enums
         PropertyCastingError = 1013,
         #endregion Properties
 
+        [Description("Entity not found.")]
+        EntityNotFound = 9998,
         [Description("Unknown error.")]
         UnknownError = 9999,
         #endregion General errors
