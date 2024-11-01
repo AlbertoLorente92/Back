@@ -12,6 +12,7 @@ namespace Back.Mappers
                 Guid = guid,
                 Id = id,
                 Name = request.Name,
+                ComercialName = request.ComercialName,
                 Vat = request.Vat,
                 Deleted = false,
                 CreationDate = DateTime.UtcNow

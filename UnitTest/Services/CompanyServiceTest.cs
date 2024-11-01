@@ -162,6 +162,7 @@ namespace UnitTest.Services
             {
                 Vat = "00000003R",
                 Name = "Company C",
+                ComercialName = "Company C",
             };
 
             var mockedCompanies = new List<CompanyEntity>
@@ -189,6 +190,7 @@ namespace UnitTest.Services
             {
                 Vat = "00000001R",
                 Name = "Company C",
+                ComercialName = "Company C",
             };
 
 

@@ -44,7 +44,6 @@ namespace UnitTest.Controllers
             _controller = new CompanyController(
                 logger: mockLogger.Object, 
                 textEncryption: _encryptionService.Object,
-                configuration: _mockConfiguration.Object,
                 companyService: _companyService.Object
             );
         }
@@ -559,6 +558,7 @@ namespace UnitTest.Controllers
             var createCompanyRequest = new CreateCompanyRequest()
             {
                 Name = "Company",
+                ComercialName = "Company",
                 Vat = "00000001R"
             };
 
@@ -657,6 +657,7 @@ namespace UnitTest.Controllers
             var createCompanyRequest = new CreateCompanyRequest()
             {
                 Name = "Company",
+                ComercialName = "Company",
                 Vat = "00000001R"
             };
 
@@ -688,6 +689,7 @@ namespace UnitTest.Controllers
             var createCompanyRequest = new CreateCompanyRequest()
             {
                 Name = "Company",
+                ComercialName = "Company",
                 Vat = "00000001R"
             };
 

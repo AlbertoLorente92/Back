@@ -13,7 +13,6 @@ namespace Back.Controllers
     public class CompanyController(
         ILogger<CompanyController> logger
             , ITextEncryptionService textEncryption
-            , IConfiguration configuration
             , ICompanyService companyService) : ControllerBase
     {
         private readonly ILogger<CompanyController> _logger = logger;

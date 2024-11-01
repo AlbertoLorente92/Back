@@ -71,7 +71,7 @@ class Program
 
     static async Task CreateCompany()
     {
-        var createCompanyRequest = new CreateCompanyRequest() { Name = "Takitos", Vat = "Vat123" };
+        var createCompanyRequest = new CreateCompanyRequest() { Name = "Takitos", Vat = "Vat123", ComercialName = "Takitos 2.0" };
         var encryptedMsg = _textEncryptionService.SerielizeAndEncrypt(createCompanyRequest);
         var response = await PostEntity<CompanyEntity>($"Company/CreateCompany?encryptedCompanyCreationRequest={WebUtility.UrlEncode(encryptedMsg)}");
         if (response != null) {

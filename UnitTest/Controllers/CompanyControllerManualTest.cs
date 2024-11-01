@@ -54,7 +54,7 @@ namespace UnitTest.Controllers
 
             _companyService = new CompanyService(new Mock<ILogger<CompanyService>>().Object, _realCompanies, sharedLocalizer);
 
-            _controller = new CompanyController(mockLogger.Object, _realEncryptionService, mockConfiguration.Object, _companyService);
+            _controller = new CompanyController(mockLogger.Object, _realEncryptionService, _companyService);
             var httpContext = new DefaultHttpContext();
             httpContext.Request.Headers["Accept-Language"] = "en";
             _controller.ControllerContext = new ControllerContext
@@ -152,7 +152,8 @@ namespace UnitTest.Controllers
             var createCompanyRequest = new CreateCompanyRequest()
             {
                 Name = "Company B",
-                Vat = "00000002R"
+                Vat = "00000002R",
+                ComercialName = "Company B",
             };
 
             var encryptedCompany = _realEncryptionService.SerielizeAndEncrypt(createCompanyRequest);
